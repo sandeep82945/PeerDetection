@@ -20,6 +20,11 @@ elif torch.cuda.is_available():
 else:
     device = torch.device('cpu')
     
+
+checkpoint_file = "checkpoint_new.json"
+output_file = "peer_review_outputs_new.json"
+run_all = True
+
 from transformers import (AutoTokenizer,
                           AutoModelForSeq2SeqLM,
                           AutoModelForCausalLM,
@@ -387,8 +392,6 @@ def safe_serialize(obj):
 def main(args):
     # Load datasets
     model, tokenizer, device = load_model(args)
-    checkpoint_file = "checkpoint.json"
-    output_file = "peer_review_outputs.json"
 
     # Load existing progress if checkpoint exists
     if os.path.exists(checkpoint_file):
@@ -399,7 +402,12 @@ def main(args):
         processed_data = []
         processed_titles = set()
 
-    for each_dic in read_json.data:
+    if run_all==True:
+        read_file = read_json.read_old()
+    else:
+        read_file = read_json.data
+
+    for each_dic in read_file:
         title = each_dic['title']
         if title in processed_titles:
             print(f"Skipping already processed: {title}")

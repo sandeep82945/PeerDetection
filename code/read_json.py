@@ -57,3 +57,38 @@ with open('/Users/sandeepkumar/Projects/source_watermarking/try_1.json') as f:
 
 # print("Greenlist IDs:", greenlist_ids)
 # print("Redlist IDs:", redlist_ids)
+
+from tqdm import tqdm
+import os
+def read_old():
+    input_folder = '../ICLR_jsons'
+    all_jsons = []
+    for filename in tqdm(os.listdir(input_folder)):
+        if not filename.endswith('.json'):
+            continue
+        # if not os.path.exists(dump_filename.replace('Fake','Response')):
+        #      continue
+        
+        filepath = os.path.join(input_folder,filename)
+        with open(filepath, 'r') as f:
+            doc = json.load(f)
+
+        title = None
+        if 'title' in doc.keys():
+            title = doc["title"]
+        if title is None:
+            continue
+        abstract = doc["abstractText"]
+        section_str = ''
+        if 'sections' not in doc.keys():
+            continue
+        for sec in doc["sections"]:
+            section_str= section_str + (sec["heading"] + " " if "heading" in sec.keys() else '') + " " + sec["text"]
+            if "heading" in sec.keys() and sec["heading"].lower().find('conclusion')>=0:
+                break
+
+
+        full_text = {"abstract": abstract, "paper_text":section_str, "title":title}
+
+        all_jsons.append(full_text)
+    return all_jsons
