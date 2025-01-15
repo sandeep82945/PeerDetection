@@ -9,7 +9,7 @@ import json
 from collections import Counter
 
 # Load the dataset from the JSON file
-with open('peer_review_outputs.json', 'r') as file:
+with open('peer_review_outputs_new.json', 'r') as file:
     data = json.load(file)
 
 # Extract features and labels from the dataset
@@ -19,11 +19,17 @@ p_values = []
 labels = []
 
 for entry in data:
-    if "output_without" in entry:
+    if "output_without" in entry and "output_with" in entry:
+        # Extract features for both watermarked and non-watermarked cases
         z_scores.append(entry["output_without"]["z_score"])
         green_fractions.append(entry["output_without"]["green_fraction"])
         p_values.append(entry["output_without"]["p_value"])
-        labels.append(1 if "peer_review_with_watermark" in entry else 0)  # Label 1 for watermarked, 0 otherwise
+        labels.append(0)  # Label 0 for non-watermarked
+
+        z_scores.append(entry["output_with"]["z_score"])
+        green_fractions.append(entry["output_with"]["green_fraction"])
+        p_values.append(entry["output_with"]["p_value"])
+        labels.append(1)  # Label 1 for watermarked
 
 # Convert lists to numpy arrays
 z_scores = np.array(z_scores)
@@ -73,7 +79,7 @@ criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-4)
 
 # Training the model
-num_epochs = 50
+num_epochs = 2600
 for epoch in range(num_epochs):
     # Forward pass
     outputs = model(X_train_tensor)
@@ -110,6 +116,3 @@ with torch.no_grad():
 
 # Save the model
 # torch.save(model.state_dict(), "watermark_classifier.pth")
-
-# Load the model (example)
-# model.load_state_dict(torch.load("watermark_classifier.pth"))

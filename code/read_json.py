@@ -1,6 +1,6 @@
 import pandas as pd
 import json
-with open('/Users/sandeepkumar/Projects/source_watermarking/try_1.json') as f:
+with open('../try_1.json') as f:
     data = json.load(f)
 
 

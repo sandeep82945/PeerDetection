@@ -9,8 +9,9 @@ from pandas.core.frame import DataFrame
 import pandas as pd
 import numpy  # for gradio hot reload
 from watermark_processor import WatermarkLogitsProcessor_with_preferance, WatermarkDetector_with_preferance
+from attack import attack_process
 import read_json
-
+from tqdm import tqdm
 import torch
 torch.manual_seed(123)
 if torch.backends.mps.is_available():
@@ -21,8 +22,8 @@ else:
     device = torch.device('cpu')
     
 
-checkpoint_file = "checkpoint_new.json"
-output_file = "peer_review_outputs_new.json"
+checkpoint_file = "checkpoint_new_attack.json"
+output_file = "peer_review_outputs_attack.json"
 run_all = True
 
 from transformers import (AutoTokenizer,
@@ -332,9 +333,9 @@ def generate(prompt, args, model=None, device=None, tokenizer=None,index=None, t
     torch.manual_seed(args.generation_seed)
     output_without_watermark = generate_without_watermark(**tokd_input)
     decoded_output_without_watermark = tokenizer.batch_decode(output_without_watermark, skip_special_tokens=True)[0]
-    print(decoded_output_with_watermark)
-    print("----------------------------------------------")
-    print(decoded_output_without_watermark)
+    # print(decoded_output_with_watermark)
+    # print("----------------------------------------------")
+    # print(decoded_output_without_watermark)
     return (tokd_input["input_ids"].shape[-1],
             output_with_watermark.shape[-1],
             redecoded_input,
@@ -407,7 +408,7 @@ def main(args):
     else:
         read_file = read_json.data
 
-    for each_dic in read_file:
+    for each_dic in tqdm(read_file):
         title = each_dic['title']
         if title in processed_titles:
             print(f"Skipping already processed: {title}")
@@ -416,21 +417,21 @@ def main(args):
         abstract = each_dic['abstract']
         paper_text = each_dic['paper_text']
 
-        content = f''' The peer review format and length should be of standard conference.
-        title: {title}
-        abstract: {abstract}
-        paper text: {paper_text}
+        content = f''' The peer review format and length should be of standard conference. \\
+        title: {title} \\
+        abstract: {abstract} \\
+        paper text: {paper_text} \\
         
-        Steps to follow :-
-        Step 1: Read the paper critically and Only write peer review and nothing else
-        Step 2: In Peer review Only write Paper Summary, Strengths, Weaknesses, Suggestions for Improvement and Recommendation
-        Step 2: Output Format: You must Return the Review enclosed in [Review] [\Review]
+        Steps to follow :- \\
+        Step 1: Read the paper critically and Only write peer review and nothing else \\
+        Step 2: In Peer review Only write Paper Summary, Strengths, Weaknesses, Suggestions for Improvement and Recommendation \\
+        Step 2: Output Format: You must Return the Review enclosed between $$$\\ 
         '''
 
-        system_prompt = ''' You are a Research Scientist. Your task is to thoroughly and critically read the paper and write a peer review of it.  Steps to follow :-
-        Step 1: Read the paper critically and Only write peer review and nothing else
-        Step 2: In Peer review Only write Paper Summary, Strengths, Weaknesses, Suggestions for Improvement and Recommendation
-        Step 2: Output Format: You must Return the Review enclosed in [Review] [\Review]'''
+        system_prompt = ''' You are a Research Scientist. Your task is to thoroughly and critically read the paper and write a peer review of it.  Steps to follow :- \\
+        Step 1: Read the paper critically and Only write peer review and nothing else \\
+        Step 2: In Peer review Only write Paper Summary, Strengths, Weaknesses, Suggestions for Improvement and Recommendation \\
+        Step 2: Output Format: You must Return the Review enclosed between $$$'''
 
         input_text = [
             {"role": "system", "content": system_prompt},
@@ -446,6 +447,17 @@ def main(args):
             tokenizer=tokenizer,
             title=title
         )
+        ##Attack
+        if args.attack_ep==0:
+            pass
+        else:
+            decoded_output_with_watermark,skip=attack_process(decoded_output_with_watermark,epsilon=args.attack_ep)
+            if not skip:
+                    print("Attacked Output:", attacked_output)
+            else:
+                    print("Attack skipped.")
+                    break
+
         
         # Detect scores for watermarked output
         if args.detect_mode == 'normal':
