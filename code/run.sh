@@ -1,0 +1,1 @@
+python tester.py --model_name_or_path meta-llama/Llama-3.1-8B-Instruct --max_new_tokens 2000 --min_new_tokens 5 --gamma 0.9 --attack_ep 0.1 --delta 1
