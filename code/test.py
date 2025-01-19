@@ -22,8 +22,8 @@ else:
     device = torch.device('cpu')
     
 
-checkpoint_file = "checkpoint_new_attack.json"
-output_file = "peer_review_outputs_attack.json"
+checkpoint_file = "checkpoint/checkpoint_new_0.5.json"
+output_file = "checkpoint/peer_review_outputs_0.5.json"
 run_all = True
 
 from transformers import (AutoTokenizer,
@@ -305,13 +305,12 @@ def generate(prompt, args, model=None, device=None, tokenizer=None,index=None, t
         output_scores=True,
         **gen_kwargs
     )
-
     if args.prompt_max_length:
-        pass
-    elif hasattr(model.config,"max_position_embedding"):
-        args.prompt_max_length = model.config.max_position_embeddings-args.max_new_tokens
+        # Use user-specified value, ensuring it's within the model's limit
+        args.prompt_max_length = min(args.prompt_max_length, model.config.max_position_embeddings)
     else:
-        args.prompt_max_length = 2048-args.max_new_tokens
+        # Default to the model's full capacity minus generated tokens
+        args.prompt_max_length = model.config.max_position_embeddings - args.max_new_tokens
 
     tokd_input = tokenizer.apply_chat_template(prompt, return_tensors="pt", add_generation_prompt=True, truncation=True,
                            max_length=args.prompt_max_length, return_dict=True).to(device)
@@ -418,15 +417,15 @@ def main(args):
         paper_text = each_dic['paper_text']
 
         content = f''' The peer review format and length should be of standard conference. \\
-        title: {title} \\
-        abstract: {abstract} \\
-        paper text: {paper_text} \\
-        
-        Steps to follow :- \\
-        Step 1: Read the paper critically and Only write peer review and nothing else \\
-        Step 2: In Peer review Only write Paper Summary, Strengths, Weaknesses, Suggestions for Improvement and Recommendation \\
-        Step 2: Output Format: You must Return the Review enclosed between $$$\\ 
-        '''
+            Steps to follow :- \\
+            Step 1: Read the paper critically and Only write peer review and nothing else \\
+            Step 2: In Peer review Only write Paper Summary, Strengths, Weaknesses, Suggestions for Improvement and Recommendation \\
+            Step 2: Output Format: You must Return the Review enclosed between $$$\\ 
+            title: {title} \\
+            abstract: {abstract} \\
+            paper text: {paper_text} \\
+            \nSTART OF REVIEW:\n
+            '''
 
         system_prompt = ''' You are a Research Scientist. Your task is to thoroughly and critically read the paper and write a peer review of it.  Steps to follow :- \\
         Step 1: Read the paper critically and Only write peer review and nothing else \\
@@ -447,16 +446,19 @@ def main(args):
             tokenizer=tokenizer,
             title=title
         )
+        decoded_output_without_watermark = decoded_output_without_watermark.split("START OF REVIEW:")[-1].strip()
+
+        decoded_output_with_watermark = decoded_output_with_watermark.split("START OF REVIEW:")[-1].strip()
         ##Attack
         if args.attack_ep==0:
             pass
         else:
             decoded_output_with_watermark,skip=attack_process(decoded_output_with_watermark,epsilon=args.attack_ep)
-            if not skip:
-                    print("Attacked Output:", attacked_output)
-            else:
-                    print("Attack skipped.")
-                    break
+            # if not skip:
+            #         print("Attacked Output:", attacked_output)
+            # else:
+            #         print("Attack skipped.")
+            #         break
 
         
         # Detect scores for watermarked output
