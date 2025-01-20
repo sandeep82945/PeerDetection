@@ -20,10 +20,9 @@ elif torch.cuda.is_available():
     device = torch.device('cuda')
 else:
     device = torch.device('cpu')
-    
 
-checkpoint_file = "checkpoint/checkpoint_new_0.5.json"
-output_file = "checkpoint/peer_review_outputs_0.5.json"
+from watermark import evaluate_generation_fluency_from_output
+
 run_all = True
 
 from transformers import (AutoTokenizer,
@@ -243,7 +242,10 @@ def parse_args():
 def load_model(args):
     """Load and return the model and tokenizer"""
 
-    model = AutoModelForCausalLM.from_pretrained(args.model_name_or_path, torch_dtype=torch.float16, device_map='auto')
+    if args.load_fp16:
+        model = AutoModelForCausalLM.from_pretrained(args.model_name_or_path, torch_dtype=torch.float16, device_map='auto')
+    else:
+        model = AutoModelForCausalLM.from_pretrained(args.model_name_or_path, device_map='auto')
 
     # args.is_seq2seq_model = any([(model_type in args.model_name_or_path) for model_type in ["t5", "T0"]])
     # args.is_decoder_only_model = any(
@@ -321,6 +323,10 @@ def generate(prompt, args, model=None, device=None, tokenizer=None,index=None, t
         tokd_input = {"input_ids": tokd_input}
     
     torch.manual_seed(args.generation_seed)
+    output_without_watermark = generate_without_watermark(**tokd_input)
+    decoded_output_without_watermark = tokenizer.batch_decode(output_without_watermark, skip_special_tokens=True)[0]
+
+    torch.manual_seed(args.generation_seed)
     out = generate_with_watermark(**tokd_input)
     torch.manual_seed(args.generation_seed)
     output_with_watermark = out[0]
@@ -329,9 +335,6 @@ def generate(prompt, args, model=None, device=None, tokenizer=None,index=None, t
     truncation_warning = True if tokd_input["input_ids"].shape[-1] == args.prompt_max_length else False
     redecoded_input = tokenizer.batch_decode(tokd_input["input_ids"], skip_special_tokens=True)[0]
 
-    torch.manual_seed(args.generation_seed)
-    output_without_watermark = generate_without_watermark(**tokd_input)
-    decoded_output_without_watermark = tokenizer.batch_decode(output_without_watermark, skip_special_tokens=True)[0]
     # print(decoded_output_with_watermark)
     # print("----------------------------------------------")
     # print(decoded_output_without_watermark)
@@ -391,7 +394,10 @@ def safe_serialize(obj):
 
 def main(args):
     # Load datasets
+    checkpoint_file = f"checkpoint/checkpoint_new_{args.gamma}_GD3.json"
+    output_file = f"checkpoint/peer_review_outputs_{args.gamma}_GD3.json"
     model, tokenizer, device = load_model(args)
+    print("yes")
 
     # Load existing progress if checkpoint exists
     if os.path.exists(checkpoint_file):
@@ -446,9 +452,9 @@ def main(args):
             tokenizer=tokenizer,
             title=title
         )
-        decoded_output_without_watermark = decoded_output_without_watermark.split("START OF REVIEW:")[-1].strip()
+        decoded_output_without_watermark = decoded_output_without_watermark.split("START OF REVIEW:assistant\n")[-1].strip()
 
-        decoded_output_with_watermark = decoded_output_with_watermark.split("START OF REVIEW:")[-1].strip()
+        decoded_output_with_watermark = decoded_output_with_watermark.split("START OF REVIEW:assistant\n")[-1].strip()
         ##Attack
         if args.attack_ep==0:
             pass
@@ -514,128 +520,94 @@ def main(args):
     print(f"Saved results to {output_file}")
 
 
-
-
-# def main(args):
-#     # Load datasets
-#     model, tokenizer, device = load_model(args)
-#     output_data = []  # To store results
-#     for each_dic in read_json.data:
-#         title = each_dic['title']
-#         abstract = each_dic['abstract']
-#         paper_text = each_dic['paper_text']
-
-#         input_text = f'''You are a Research Scientist. Your task is to thoroughly and critically read the paper and write a peer review of it.
-#         title: {title}
-#         abstract: {abstract}
-#         paper text: {paper_text}
-#         The Peer Review of the paper is :-
-#         '''
-#         input_token_num, output_token_num, _, _, decoded_output_without_watermark, decoded_output_with_watermark, watermark_processor,_= generate(input_text,
-#                     args,
-#                     model=model,
-#                     device=device,
-#                     tokenizer=tokenizer,
-#                     title= title)
-        
-#         if args.detect_mode == 'normal':
-                
-#                     gr_score_list = []
-#                     max_sim = 0
-#                     max_sim_idx = -1
-                    
-#                     output_dict, gr_score,mark = detect(decoded_output_with_watermark,
-#                                                                                     args,
-#                                                                                     device=device,
-#                                                                                     tokenizer=tokenizer,
-#                                                                                     title=title)
-#         output_data.append({
-#             "title": title,
-#             "abstract": abstract,
-#             "peer_review_without_watermark": decoded_output_without_watermark,
-#             "peer_review_with_watermark": decoded_output_with_watermark,
-#             "gr_score": gr_score,
-#             "mark": mark
-#         })
-
-        
-
-#         print(gr_score)
-#         exit(0)
-
-# def main(args):
-#     # Load datasets
-#     model, tokenizer, device = load_model(args)
-#     input_text = "How to change the car battery"
-#     input_token_num, output_token_num, _, _, decoded_output_without_watermark, decoded_output_with_watermark, watermark_processor,_= generate(input_text,
-#                 args,
-#                 model=model,
-#                 device=device,
-#                 tokenizer=tokenizer,
-#                 title= "my paper title")
+def testppl(args):
+    """
+    Evaluate the perplexity of watermarked and baseline text generations using the model.
     
-#     if args.detect_mode == 'normal':
-            
-#                 gr_score_list = []
-#                 max_sim = 0
-#                 max_sim_idx = -1
-                
-#                 output_dict, gr_score,mark = detect(decoded_output_with_watermark,
-#                                                                                 args,
-#                                                                                 device=device,
-#                                                                                 tokenizer=tokenizer,
-#                                                                                 title="my paper title")
-    
+    Args:
+        args: Parsed arguments containing configurations like model name, dataset, and generation parameters.
+    """
+    # Load model, tokenizer, and device
+    model, tokenizer, device = load_model(args)
+
+    # Load the dataset (from your read_json logic)
+    if run_all:
+        read_file = read_json.read_old()
+    else:
+        read_file = read_json.data
+
+    exp_num = len(read_file)
+    result_wm = np.zeros(exp_num)
+    result_bl = np.zeros(exp_num)
+
+    for i, paper_data in enumerate(tqdm(read_file, desc="Evaluating Perplexity")):
+        title = paper_data['title']
+        abstract = paper_data['abstract']
+        paper_text = paper_data['paper_text']
 
 
-#     print(gr_score)
-#     exit(0)
+        # Construct input content
+        content = f''' The peer review format and length should be of standard conference. \\
+            Steps to follow :- \\
+            Step 1: Read the paper critically and only write peer review and nothing else \\
+            Step 2: In Peer review, only write Paper Summary, Strengths, Weaknesses, Suggestions for Improvement, and Recommendation \\
+            Step 3: Output Format: You must return the review enclosed between $$$\\ 
+            title: {title} \\
+            abstract: {abstract} \\
+            paper text: {paper_text} \\
+            \nSTART OF REVIEW:\n
+        '''
 
-                                                                                    
-                #     # sim = compute_similarity(mark, loop_usr_id)
-                #     gr_score_list.append(gr_score)
-                #     depth_score_list.append(depth_score)
-                #     if gr_score> max_sim:
-                #         max_sim = gr_score
-                #         max_sim_idx = j
-                
-                # detect_range=len(usr_list)//10
-                # mapped_gr_score=gr_score_list[gen_id]
-                # mapped_depth_score=depth_score_list[gen_id]
-                # # sim_result=np.zeros([2,detect_range])
-                # gr_result=[]
-                # depth_result=[]
-                # id_result=[]
-                # id_index=[]
-             
-                    
-                    
-                # if args.gen_mode=='normal':
-                #     for r in range(detect_range): # sort with depth
-                #         sim = max(gr_score_list)
-                #         index = gr_score_list.index(sim)
-                #         gr_score_list[index] = -100
-                #         gr_result.append(sim)
-                #         id_result.append(usr_list[index])
-                #         id_index.append(index)
+        # Set the input prompt
+        input_text = [
+            {"role": "system", "content": "You are a research scientist tasked with writing peer reviews."},
+            {"role": "user", "content": content},
+        ]
 
-                #     result_dic={"gr_score":gr_result[:10], "id":id_result[:10]}
-                #     if_succ_top1=0
-                #     if_succ_top3=0
-                #     if_succ_top10=0
+        # Generate watermarked and baseline outputs
+        input_token_num, output_token_num, _, _, decoded_output_without_watermark, decoded_output_with_watermark, _, _ = generate(
+            input_text,
+            args,
+            model=model,
+            device=device,
+            tokenizer=tokenizer,
+            title=title  # Title used to generate the green list
+        )
 
-                # if gen_id in id_index[:3]:
-                #     succ_num_top3 += 1
-                #     if_succ_top3=1
+        # Concatenate input with the generated outputs
+        input_p_output_wm = f"{decoded_output_with_watermark}"
+        input_p_output_bl = f"{decoded_output_without_watermark}"
 
-                # if gen_id in id_index[:1]:
-                #     succ_num_top1+=1
-                #     if_succ_top1=1
-                    
-                # if gen_id in id_index[:10]:
-                #     succ_num_top10+=1
-                #     if_succ_top10=1
-            
+        # Evaluate perplexity using the loaded model
+        loss_wm, ppl_wm = evaluate_generation_fluency_from_output(
+            input_p_output_wm,
+            decoded_output_with_watermark,
+            args.model_name_or_path,
+            model,
+            tokenizer,
+            device
+        )
+        loss_bl, ppl_bl = evaluate_generation_fluency_from_output(
+            input_p_output_bl,
+            decoded_output_without_watermark,
+            args.model_name_or_path,
+            model,
+            tokenizer,
+            device
+        )
+
+        # Record results
+        result_wm[i] = ppl_wm
+        result_bl[i] = ppl_bl
+        print(f"{i + 1}/{exp_num}: Baseline Perplexity: {ppl_bl}, Delta: {args.delta}, Watermarked Perplexity: {ppl_wm}")
+
+    # Summarize results
+    print("\nFinal Results:")
+    print(f"Watermarked Perplexity Mean: {result_wm.mean():.4f}")
+    print(f"Baseline Perplexity Mean: {result_bl.mean():.4f}")
+
+
+
             
 
 if __name__ == "__main__":

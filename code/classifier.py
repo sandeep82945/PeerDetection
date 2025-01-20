@@ -9,7 +9,7 @@ import json
 from collections import Counter
 
 # Load the dataset from the JSON file
-with open('checkpoint/checkpoint_new.json', 'r') as file:
+with open('checkpoint/peer_review_outputs_0.3_GD2.json', 'r') as file:
     data = json.load(file)
 
 # Extract features and labels from the dataset
@@ -79,7 +79,7 @@ criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-4)
 
 # Training the model
-num_epochs = 100000
+num_epochs = 10000
 for epoch in range(num_epochs):
     # Forward pass
     outputs = model(X_train_tensor)

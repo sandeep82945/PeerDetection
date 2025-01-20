@@ -177,8 +177,9 @@ class WatermarkLogitsProcessor_with_preferance(WatermarkBase, LogitsProcessor):
     def _bias_greenlist_logits(self, scores: torch.Tensor, greenlist_mask: torch.Tensor,
                                greenlist_bias: float, decrease_delta: bool) -> torch.Tensor:
         if decrease_delta:
-            greenlist_bias=4.84*(math.e)**(-1*0.001*self.idx_t)
-        scores[greenlist_mask] = scores[greenlist_mask] + greenlist_bias
+            greenlist_bias = greenlist_bias * (1 / (1 + 0.001 * self.idx_t))
+            # greenlist_bias=4.84*(math.e)**(-1*0.001*self.idx_t)
+        scores[greenlist_mask] = scores[greenlist_mask] + 3 #greenlist_bias
         # print(greenlist_bias,self.idx_t)
         return scores
 
@@ -190,8 +191,6 @@ class WatermarkLogitsProcessor_with_preferance(WatermarkBase, LogitsProcessor):
         green_tokens_mask = self._calc_greenlist_mask(scores, [greenlist_token_ids])
         scores_withnomask = copy.deepcopy(scores)
         scores = self._bias_greenlist_logits(scores=scores, greenlist_mask=green_tokens_mask, greenlist_bias=self.delta,decrease_delta=self.decrease_delta)
-
-
         return scores
          
        
@@ -267,7 +266,7 @@ class WatermarkDetector_with_preferance(WatermarkBase):
                 prefix = torch.tensor([bigram[0]],
                                       device=self.device)  # expects a 1-d prefix tensor on the randperm device
 
-                greenlist_ids,_ = self._get_greenlist_ids("my paper title")
+                greenlist_ids,_ = self._get_greenlist_ids(self.title)
                 bigram_table[bigram] = True if bigram[1] in greenlist_ids else False
             green_token_count = sum(bigram_table.values())
 
@@ -335,6 +334,8 @@ class WatermarkDetector_with_preferance(WatermarkBase):
 
             # print(tokenized_text)
             # exit(0)
+
+
 
 if __name__ == "__main__":
     obj = WatermarkBase(vocab=[1,2,3])
