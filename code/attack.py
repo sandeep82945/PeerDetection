@@ -67,14 +67,39 @@ def attack_process(decoded_output, epsilon):
     decoded_output = tokenizer.decode(attacked_output[0], skip_special_tokens=True)
     return decoded_output, skip
 
+
+
+def paraphrase_local_gpt(prompt, level=1):
+    # Load tokenizer and model (e.g., GPT-2)
+    tokenizer = AutoTokenizer.from_pretrained("gpt2")
+    model = AutoModelForCausalLM.from_pretrained("gpt2")
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    model.to(device)
+    instructions = {
+        1: "Paraphrase the following text with minimal changes. Keep the meaning as close to the original as possible:",
+        2: "Paraphrase the following text moderately. Change some sentence structures and wording but keep the overall meaning:",
+        3: "Paraphrase the following text significantly. Rephrase it completely while maintaining the meaning:",
+    }
+
+    instruction = instructions.get(level, instructions[1])
+    full_prompt = f"{instruction}\n\nText: {prompt}\n\nParaphrased Version:"
+
+    inputs = tokenizer(full_prompt, return_tensors="pt", truncation=True, max_length=1024).to(device)
+    outputs = model.generate(inputs["input_ids"], max_new_tokens=200, temperature=0.7)
+    paraphrased_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+    return paraphrased_text
+
+
 # Example usage
 prompt = "The systems interconnect is expected to cost"
-decoded_output = prompt
-epsilon = 0.2  # Fraction of tokens to attack
+print(paraphrase_local_gpt(prompt))
+# decoded_output = prompt
+# epsilon = 0.2  # Fraction of tokens to attack
 
-# Perform attack
-attacked_output, skip = attack_process(decoded_output, epsilon)
-if not skip:
-    print("Attacked Output:", attacked_output)
-else:
-    print("Attack skipped.")
+# # Perform attack
+# attacked_output, skip = attack_process(decoded_output, epsilon)
+# if not skip:
+#     print("Attacked Output:", attacked_output)
+# else:
+#     print("Attack skipped.")

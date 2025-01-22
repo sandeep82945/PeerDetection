@@ -157,6 +157,37 @@ class WatermarkBase(Title2Seed):
         redlist_ids = vocab_permutation[greenlist_size:]
 
         return greenlist_ids, redlist_ids
+    
+    def get_orangelist_ids(self, paper, red, model, tokenizer, beta=0.8, sim_thresh = 0.2):
+        """Gives you orange list
+
+        Args:
+            beta: fraction of common tokens between paper and red lists that we have to take
+            sim_thresh: cosine simliarity threshold for taking red tokens into orange
+        """ 
+
+        # Common tokens between paper and red list
+        cmn = list(set(tokenizer(paper, add_special_tokens=False)['input_ids']).intersection(set(red)))
+        random.shuffle(cmn)
+        cmn = cmn[:int(len(cmn)*beta)]
+
+        # Figuring out similar tokens between common and red lists
+        embedding_matrix = model.get_input_embeddings().weight
+
+        red_embed = embedding_matrix[red].detach().numpy()
+        norm_red_embed = red_embed / np.linalg.norm(red_embed, axis=1, keepdims=True)
+
+        cmn_embed = embedding_matrix[cmn].detach().numpy()
+        norm_cmn_embed = cmn_embed / np.linalg.norm(cmn_embed, axis=1, keepdims=True)
+
+        cos_similarities = np.dot(norm_cmn_embed, norm_red_embed.T)
+        oranges = []
+        for i, id1 in enumerate(cmn):
+            for j, id2 in enumerate(red):
+                if abs(cos_similarities[i, j]) > sim_thresh and id1!=id2:
+                    oranges.append(id2)
+        oranges.extend(cmn)
+        return oranges
 
 class WatermarkLogitsProcessor_with_preferance(WatermarkBase, LogitsProcessor):
     def __init__(self, title: str, **kwargs):

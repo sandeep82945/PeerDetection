@@ -10,6 +10,7 @@ import pandas as pd
 import numpy  # for gradio hot reload
 from watermark_processor import WatermarkLogitsProcessor_with_preferance, WatermarkDetector_with_preferance
 from attack import attack_process
+from gpt import generate_openai
 import read_json
 from tqdm import tqdm
 import torch
@@ -394,8 +395,8 @@ def safe_serialize(obj):
 
 def main(args):
     # Load datasets
-    checkpoint_file = f"checkpoint/checkpoint_new_{args.gamma}_GD3.json"
-    output_file = f"checkpoint/peer_review_outputs_{args.gamma}_GD3.json"
+    checkpoint_file = f"checkpoint/checkpoint_new_{args.gamma}_GD3_{args.attack_ep}.json"
+    output_file = f"checkpoint/peer_review_outputs_{args.gamma}_GD3_{args.attack_ep}.json"
     model, tokenizer, device = load_model(args)
     print("yes")
 
@@ -459,7 +460,8 @@ def main(args):
         if args.attack_ep==0:
             pass
         else:
-            decoded_output_with_watermark,skip=attack_process(decoded_output_with_watermark,epsilon=args.attack_ep)
+            decoded_output_with_watermark = generate_openai(decoded_output_with_watermark,args.attack_ep)
+            # decoded_output_with_watermark,skip=attack_process(decoded_output_with_watermark,epsilon=args.attack_ep)
             # if not skip:
             #         print("Attacked Output:", attacked_output)
             # else:
