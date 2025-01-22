@@ -157,10 +157,34 @@ class WatermarkBase(Title2Seed):
         redlist_ids = vocab_permutation[greenlist_size:]
 
         return greenlist_ids, redlist_ids
+    
+    def _get_orange_ids(paper: str, paperlist: list[int], redlist: list[int]) -> list[int]:
+        """
+        Generate an orange token list by taking all tokens from the paper text.
+
+        Args:
+            paper (str): Content of the research paper.
+            tokenizer: Tokenizer instance to tokenize the paper.
+            redlist (list[int]): List of redlist token IDs.
+
+        Returns:
+            list[int]: A list of orange token IDs (all tokens from the paper that are in the redlist).
+        """
+        # Tokenize the paper content
+
+        # Intersect paper tokens with the redlist
+        orange_tokens = list(set(paperlist) & set(redlist))
+
+        if not orange_tokens:
+            print("Warning: No overlap between paper tokens and redlist. Returning an empty orange list.")
+        return orange_tokens
+    
+    
 
 class WatermarkLogitsProcessor_with_preferance(WatermarkBase, LogitsProcessor):
-    def __init__(self, title: str, **kwargs):
+    def __init__(self, title: str,paperlist: list[int], **kwargs):
         self.title = title
+        self.paperlist = paperlist
         self.delta: float = 2.0
         self.decrease_delta: bool = True,
         self.idx_t = 0
@@ -188,6 +212,10 @@ class WatermarkLogitsProcessor_with_preferance(WatermarkBase, LogitsProcessor):
         if self.rng is None:
             self.rng = torch.Generator(device=device)
         greenlist_token_ids,  redlist_token_ids = self._get_greenlist_ids(self.title)
+        orange_token_ids = self._get_orangelist_ids(self.paperlist, redlist_token_ids) # To add
+        print(orange_token_ids)
+        exit(0)
+
         green_tokens_mask = self._calc_greenlist_mask(scores, [greenlist_token_ids])
         scores_withnomask = copy.deepcopy(scores)
         scores = self._bias_greenlist_logits(scores=scores, greenlist_mask=green_tokens_mask, greenlist_bias=self.delta,decrease_delta=self.decrease_delta)

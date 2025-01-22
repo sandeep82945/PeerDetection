@@ -276,12 +276,13 @@ def load_model(args):
     
     return model, tokenizer, device
 
-def generate(prompt, args, model=None, device=None, tokenizer=None,index=None, title=None):
+def generate(prompt, args, model=None, device=None, tokenizer=None,index=None, title=None, paperlist=None):
     if title == None:
         raise ValueError("Error: 'title' cannot be None.")
     gen_kwargs = dict(max_new_tokens=args.max_new_tokens,min_new_tokens=args.min_new_tokens)
 
     watermark_processor = WatermarkLogitsProcessor_with_preferance(title=title,
+                                                                paperlist=paperlist,
                                                                 vocab=list(tokenizer.get_vocab().values()),
                                                                 args=args
                                                                 )
@@ -347,7 +348,7 @@ def generate(prompt, args, model=None, device=None, tokenizer=None,index=None, t
             watermark_processor,
             args)
 
-def detect(input_text, args, device=None, tokenizer=None, title=None):
+def detect(input_text, args, device=None, tokenizer=None, title=None, paperlist=None):
 
     """Instantiate the WatermarkDetection object and call detect on
         the input text returning the scores and outcome of the test"""
@@ -397,7 +398,6 @@ def main(args):
     checkpoint_file = f"checkpoint/checkpoint_new_{args.gamma}_GD3.json"
     output_file = f"checkpoint/peer_review_outputs_{args.gamma}_GD3.json"
     model, tokenizer, device = load_model(args)
-    print("yes")
 
     # Load existing progress if checkpoint exists
     if os.path.exists(checkpoint_file):
@@ -421,6 +421,8 @@ def main(args):
 
         abstract = each_dic['abstract']
         paper_text = each_dic['paper_text']
+        paper_content = abstract + " "+ paper_text
+        paperlist = tokenizer(paper_content)['input_ids']
 
         content = f''' The peer review format and length should be of standard conference. \\
             Steps to follow :- \\
@@ -450,8 +452,10 @@ def main(args):
             model=model,
             device=device,
             tokenizer=tokenizer,
-            title=title
+            title=title,
+            paperlist= paperlist
         )
+        exit(0)
         decoded_output_without_watermark = decoded_output_without_watermark.split("START OF REVIEW:assistant\n")[-1].strip()
 
         decoded_output_with_watermark = decoded_output_with_watermark.split("START OF REVIEW:assistant\n")[-1].strip()
@@ -478,14 +482,16 @@ def main(args):
                 args,
                 device=device,
                 tokenizer=tokenizer,
-                title=title
+                title=title,
+                paperlist=paperlist
             )
             output_dict_without, gr_score_without, mark = detect(
                 decoded_output_without_watermark,
                 args,
                 device=device,
                 tokenizer=tokenizer,
-                title=title
+                title=title,
+                paperlist=paperlist
             )
 
         # Append the results to the list
@@ -545,7 +551,6 @@ def testppl(args):
         abstract = paper_data['abstract']
         paper_text = paper_data['paper_text']
 
-
         # Construct input content
         content = f''' The peer review format and length should be of standard conference. \\
             Steps to follow :- \\
@@ -571,7 +576,8 @@ def testppl(args):
             model=model,
             device=device,
             tokenizer=tokenizer,
-            title=title  # Title used to generate the green list
+            title=title,  # Title used to generate the green list
+            paper=abstract+ " "+ paper_text
         )
 
         # Concatenate input with the generated outputs
