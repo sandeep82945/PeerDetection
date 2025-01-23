@@ -186,6 +186,7 @@ class WatermarkLogitsProcessor_with_preferance(WatermarkBase, LogitsProcessor):
         self.title = title
         self.paperlist = paperlist
         self.delta: float = 2.0
+        self.theta: float = 2.0
         self.decrease_delta: bool = True,
         self.idx_t = 0
         super().__init__(**kwargs)
@@ -206,19 +207,29 @@ class WatermarkLogitsProcessor_with_preferance(WatermarkBase, LogitsProcessor):
         scores[greenlist_mask] = scores[greenlist_mask] + 3 #greenlist_bias
         # print(greenlist_bias,self.idx_t)
         return scores
+    
+    def _bias_orangelist_logits(self, scores: torch.Tensor, orangelist_mask: torch.Tensor,
+                               orangelist_bias: float, decrease_delta: bool) -> torch.Tensor:
+        if decrease_delta:
+            orangelist_bias = orangelist_bias * (1 / (1 + 0.001 * self.idx_t))
+            # greenlist_bias=4.84*(math.e)**(-1*0.001*self.idx_t)
+        scores[orangelist_mask] = scores[orangelist_mask] + 4 #greenlist_bias
+        # print(greenlist_bias,self.idx_t)
+        return scores
 
     
     def __call__(self, input_ids: torch.Tensor, scores: torch.FloatTensor) ->torch.FloatTensor:
         if self.rng is None:
             self.rng = torch.Generator(device=device)
         greenlist_token_ids,  redlist_token_ids = self._get_greenlist_ids(self.title)
-        orange_token_ids = self._get_orangelist_ids(self.paperlist, redlist_token_ids) # To add
-        print(orange_token_ids)
-        exit(0)
+        orange_token_ids = self._get_orange_ids(self.paperlist, redlist_token_ids) # To add
 
-        green_tokens_mask = self._calc_greenlist_mask(scores, [greenlist_token_ids])
+        green_tokens_mask = self._calc_greenlist_mask(scores, [greenlist_token_ids]) 
+        orange_tokens_mask = self._calc_greenlist_mask(scores, [orange_token_ids])
+
         scores_withnomask = copy.deepcopy(scores)
         scores = self._bias_greenlist_logits(scores=scores, greenlist_mask=green_tokens_mask, greenlist_bias=self.delta,decrease_delta=self.decrease_delta)
+        scores1 = self._bias_orangelist_logits(scores=scores, orangelist_mask=orange_tokens_mask, orangelist_bias=self.theta,decrease_delta=self.decrease_delta)
         return scores
          
        

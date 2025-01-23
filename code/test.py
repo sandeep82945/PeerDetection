@@ -455,7 +455,6 @@ def main(args):
             title=title,
             paperlist= paperlist
         )
-        exit(0)
         decoded_output_without_watermark = decoded_output_without_watermark.split("START OF REVIEW:assistant\n")[-1].strip()
 
         decoded_output_with_watermark = decoded_output_with_watermark.split("START OF REVIEW:assistant\n")[-1].strip()
