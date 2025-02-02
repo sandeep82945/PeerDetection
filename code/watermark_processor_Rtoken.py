@@ -122,6 +122,7 @@ class WatermarkBase(Title2Seed):
             seeding_scheme: str = "simple_1",  # mostly unused/always default
             select_green_tokens: bool = True,
             title:str =None,
+            model = None,
             args=None
     ):
         self.vocab = vocab
@@ -130,7 +131,9 @@ class WatermarkBase(Title2Seed):
         self.select_green_tokens = select_green_tokens
         self.vocab_size = len(vocab)
         self.gamma = args.gamma
+        self.len_orange = 0
         self.rng = None
+        self.model = model
         super().__init__()
 
     def _get_greenlist_ids(self, title: str) -> list[int]:
@@ -158,26 +161,62 @@ class WatermarkBase(Title2Seed):
 
         return greenlist_ids, redlist_ids
     
-    def _get_orange_ids(paper: str, paperlist: list[int], redlist: list[int]) -> list[int]:
-        """
-        Generate an orange token list by taking all tokens from the paper text.
+    
+    
+    def _get_orange_ids(self, paperlist: list[int], redlist: list[int], cos_sim, beta=0.8, sim_thresh = 0.2, paper_frac=0.3):
+        #embedding_matrix = functional.normalize(model.get_input_embeddings().weight.to("cuda:1"), p=2,dim=1)
+        #cos_sim = embedding_matrix @ embedding_matrix.T
+        #cos_sim = cos_sim.cpu().detach().numpy()
+        """Gives you orange list
 
         Args:
-            paper (str): Content of the research paper.
-            tokenizer: Tokenizer instance to tokenize the paper.
-            redlist (list[int]): List of redlist token IDs.
+            beta: fraction of common tokens between paper and red lists that we have to take
+            sim_thresh: cosine simliarity threshold for taking red tokens into orange
+            paper_frac: fraction of paper tokens that we want to consider
+            cos_sim: Similarity matrix of embeddings to be in numpy format
+        """ 
 
-        Returns:
-            list[int]: A list of orange token IDs (all tokens from the paper that are in the redlist).
-        """
-        # Tokenize the paper content
+        #cmn = tokenizer(paper, add_special_tokens=False)['input_ids']
+        cmn = paperlist
+        # random.shuffle(cmn)
+        # cmn = cmn[:int(len(cmn)*paper_frac)]
 
-        # Intersect paper tokens with the redlist
-        orange_tokens = list(set(paperlist) & set(redlist))
+        cos_sim = cos_sim[cmn]
+        # sim_thresh = torch.tensor(sim_thresh,dtype=torch.float16)
+        mask = cos_sim > sim_thresh
+        # print(mask)
+        # print(mask.device)
+        # print(mask.dtype)
+        # mask = mask.cpu()
+        # mask = mask.detach().numpy()
+        orange  = np.argwhere(mask).flatten()
+        
+        red = set(red).difference(set(orange))
 
-        if not orange_tokens:
-            print("Warning: No overlap between paper tokens and redlist. Returning an empty orange list.")
-        return orange_tokens
+        return list(set(orange)), list(red)
+    
+    # def _get_orange_ids(self, paperlist: list[int], redlist: list[int]) -> list[int]:
+    #     """
+    #     Generate an orange token list by taking all tokens from the paper text.
+
+    #     Args:
+    #         paper (str): Content of the research paper.
+    #         tokenizer: Tokenizer instance to tokenize the paper.
+    #         redlist (list[int]): List of redlist token IDs.
+
+    #     Returns:
+    #         list[int]: A list of orange token IDs (all tokens from the paper that are in the redlist).
+    #     """
+    #     # Tokenize the paper content
+
+    #     # Intersect paper tokens with the redlist
+    #     orange_tokens = list(set(paperlist) & set(redlist))
+    #     redlist = list(set(redlist) - set(orange_tokens))
+
+    #     if not orange_tokens:
+    #         print("Warning: No overlap between paper tokens and redlist. Returning an empty orange list.")
+    #     self.len_orange = len(orange_tokens)
+    #     return orange_tokens, redlist
     
     
 
@@ -187,7 +226,8 @@ class WatermarkLogitsProcessor_with_preferance(WatermarkBase, LogitsProcessor):
         self.paperlist = paperlist
         self.delta: float = 2.0
         self.theta: float = 2.0
-        self.decrease_delta: bool = True,
+        self.decrease_delta: bool = True
+        self.cos_sim = cos_sim
         self.idx_t = 0
         super().__init__(**kwargs)
     
@@ -213,7 +253,7 @@ class WatermarkLogitsProcessor_with_preferance(WatermarkBase, LogitsProcessor):
         if decrease_delta:
             orangelist_bias = orangelist_bias * (1 / (1 + 0.001 * self.idx_t))
             # greenlist_bias=4.84*(math.e)**(-1*0.001*self.idx_t)
-        scores[orangelist_mask] = scores[orangelist_mask] + 4 #greenlist_bias
+        scores[orangelist_mask] = scores[orangelist_mask] + 1.5 #orangelist_bias
         # print(greenlist_bias,self.idx_t)
         return scores
 
@@ -222,12 +262,16 @@ class WatermarkLogitsProcessor_with_preferance(WatermarkBase, LogitsProcessor):
         if self.rng is None:
             self.rng = torch.Generator(device=device)
         greenlist_token_ids,  redlist_token_ids = self._get_greenlist_ids(self.title)
-        print(greenlist_token_ids)
-        exit(0)
+        orange_token_ids, redlist_token_ids = self._get_orange_ids(self.paperlist, redlist_token_ids, self.cos_sim) # To add
+
+
         green_tokens_mask = self._calc_greenlist_mask(scores, [greenlist_token_ids]) 
+        orange_tokens_mask = self._calc_greenlist_mask(scores, [orange_token_ids])
+
         scores_withnomask = copy.deepcopy(scores)
         scores = self._bias_greenlist_logits(scores=scores, greenlist_mask=green_tokens_mask, greenlist_bias=self.delta,decrease_delta=self.decrease_delta)
-        return scores
+        scores1 = self._bias_orangelist_logits(scores=scores, orangelist_mask=orange_tokens_mask, orangelist_bias=self.theta,decrease_delta=self.decrease_delta)
+        return scores1
          
        
 class WatermarkDetector_with_preferance(WatermarkBase):
@@ -241,6 +285,7 @@ class WatermarkDetector_with_preferance(WatermarkBase):
             normalizers: list[str] = ["unicode"],  # or also: ["unicode", "homoglyphs", "truecase"]
             ignore_repeated_bigrams: bool = False,
             title: str = None,
+            paperlist = None,
             # userid,
             **kwargs
 
@@ -253,8 +298,11 @@ class WatermarkDetector_with_preferance(WatermarkBase):
         self.tokenizer = tokenizer
         self.device = device
         self.title = title
+        self.paperlist = paperlist
         if self.title == None:
             raise ValueError('Title empty during decoding')
+        if self.paperlist == None:
+            raise ValueError('paperlist empty during decoding')
 
         self.z_threshold = z_threshold
 
@@ -270,9 +318,74 @@ class WatermarkDetector_with_preferance(WatermarkBase):
         z = numer / denom
         return z
 
+    def _compute_z_score_orange(self, observed_count, T):
+        # count refers to number of green tokens, T is total number of tokens
+        expected_count = self.len_orange/self.vocab_size
+        numer = observed_count - expected_count * T
+        denom = sqrt(T * expected_count * (1 - expected_count))
+        z = numer / denom
+        return z
+    
+
+
+
     def _compute_p_value(self, z):
         p_value = scipy.stats.norm.sf(z)
         return p_value
+
+    # def _score_sequence(
+    #     self,
+    #     input_ids: Tensor,
+    #     return_num_tokens_scored: bool = True,
+    #     return_num_green_tokens: bool = True,
+    #     return_green_fraction: bool = True,
+    #     return_green_token_mask: bool = False,
+    #     return_z_score: bool = True,
+    #     return_p_value: bool = True,
+    # ):
+    #     mark = ""
+
+    #     ignore_repeated_bigrams = True #change
+    #     if ignore_repeated_bigrams:  # false
+    #         # Method that only counts a green/red hit once per unique bigram.
+    #         # New num total tokens scored (T) becomes the number unique bigrams.
+    #         # We iterate over all unqiue token bigrams in the input, computing the greenlist
+    #         # induced by the first token in each, and then checking whether the second
+    #         # token falls in that greenlist.
+    #         assert return_green_token_mask == False, "Can't return the green/red mask when ignoring repeats."
+    #         bigram_table = {}
+    #         token_bigram_generator = ngrams(input_ids.cpu().tolist(), 2)
+    #         freq = collections.Counter(token_bigram_generator)
+    #         num_tokens_scored = len(freq.keys())
+    #         for idx, bigram in enumerate(freq.keys()):
+    #             prefix = torch.tensor([bigram[0]],
+    #                                   device=self.device)  # expects a 1-d prefix tensor on the randperm device
+
+    #             greenlist_ids, redlist_ids = self._get_greenlist_ids(self.title)
+    #             orangelist_ids = self._get_orange_ids(self.paperlist, redlist_ids)
+    #             print(orangelist_ids)
+    #             exit(0)
+    #             bigram_table[bigram] = True if bigram[1] in greenlist_ids else False
+    #         green_token_count = sum(bigram_table.values())
+
+    #         score_dict = dict()
+    #     if return_num_tokens_scored:
+    #         score_dict.update(dict(num_tokens_scored=num_tokens_scored))
+    #     if return_num_green_tokens:
+    #         score_dict.update(dict(num_green_tokens=green_token_count))
+    #     if return_green_fraction:
+    #         score_dict.update(dict(green_fraction=(green_token_count / num_tokens_scored)))
+    #     # print(green_token_count / num_tokens_scored)
+    #     if return_z_score:
+    #         score_dict.update(dict(z_score=self._compute_z_score(green_token_count, num_tokens_scored)))
+    #     if return_p_value:
+    #         z_score = score_dict.get("z_score")
+    #         if z_score is None:
+    #             z_score = self._compute_z_score(green_token_count, num_tokens_scored)
+    #         score_dict.update(dict(p_value=self._compute_p_value(z_score)))
+    #     sim_score=green_token_count / num_tokens_scored
+    #     gr_sim_score=np.array(sim_score)
+    #     return score_dict, gr_sim_score,None, mark
 
     def _score_sequence(
         self,
@@ -281,49 +394,80 @@ class WatermarkDetector_with_preferance(WatermarkBase):
         return_num_green_tokens: bool = True,
         return_green_fraction: bool = True,
         return_green_token_mask: bool = False,
-        return_z_score: bool = True,
+        return_num_orange_tokens: bool = True,  # New argument
+        return_orange_fraction: bool = True,  # New argument
+        return_green_z_score: bool = True,  # Renamed for clarity
+        return_orange_z_score: bool = True,  # New argument
         return_p_value: bool = True,
     ):
         mark = ""
+        ignore_repeated_bigrams = True  # change if needed
 
-        ignore_repeated_bigrams = True #change
-        if ignore_repeated_bigrams:  # false
-            # Method that only counts a green/red hit once per unique bigram.
-            # New num total tokens scored (T) becomes the number unique bigrams.
-            # We iterate over all unqiue token bigrams in the input, computing the greenlist
-            # induced by the first token in each, and then checking whether the second
-            # token falls in that greenlist.
+        if ignore_repeated_bigrams:  # Handles the unique bigram case
+            # Method that only counts green/red/orange hits once per unique bigram
             assert return_green_token_mask == False, "Can't return the green/red mask when ignoring repeats."
             bigram_table = {}
             token_bigram_generator = ngrams(input_ids.cpu().tolist(), 2)
             freq = collections.Counter(token_bigram_generator)
             num_tokens_scored = len(freq.keys())
-            for idx, bigram in enumerate(freq.keys()):
-                prefix = torch.tensor([bigram[0]],
-                                      device=self.device)  # expects a 1-d prefix tensor on the randperm device
+            
+            # Prepare token lists
+            greenlist_ids, redlist_ids = self._get_greenlist_ids(self.title)
+            orangelist_ids, _ = self._get_orange_ids(self.paperlist, redlist_ids, self.cos_sim)
 
-                greenlist_ids,_ = self._get_greenlist_ids(self.title)
-                bigram_table[bigram] = True if bigram[1] in greenlist_ids else False
-            green_token_count = sum(bigram_table.values())
+            # Flatten and deduplicate orange tokens
+            orangelist_ids = list(set(sum(orangelist_ids, [])) if isinstance(orangelist_ids[0], list) else set(orangelist_ids))
+
+            # Remove orange tokens from redlist
+            redlist_ids = list(set(redlist_ids) - set(orangelist_ids))
+            
+            green_token_count = 0
+            orange_token_count = 0
+
+            for idx, bigram in enumerate(freq.keys()):
+                prefix = torch.tensor([bigram[0]], device=self.device)
+
+                # Check for green and orange hits
+                is_green = bigram[1] in greenlist_ids
+                is_orange = bigram[1] in orangelist_ids
+                bigram_table[bigram] = is_green or is_orange
+
+                if is_green:
+                    green_token_count += 1
+                elif is_orange:
+                    orange_token_count += 1
 
             score_dict = dict()
+
+        # Calculate z-scores for green and orange tokens
+        green_z_score = self._compute_z_score(green_token_count, num_tokens_scored) if return_green_z_score else None
+        orange_z_score = self._compute_z_score_orange(orange_token_count, num_tokens_scored) if return_orange_z_score else None
+
         if return_num_tokens_scored:
             score_dict.update(dict(num_tokens_scored=num_tokens_scored))
         if return_num_green_tokens:
             score_dict.update(dict(num_green_tokens=green_token_count))
         if return_green_fraction:
             score_dict.update(dict(green_fraction=(green_token_count / num_tokens_scored)))
-        # print(green_token_count / num_tokens_scored)
-        if return_z_score:
-            score_dict.update(dict(z_score=self._compute_z_score(green_token_count, num_tokens_scored)))
+        if return_num_orange_tokens:
+            score_dict.update(dict(num_orange_tokens=orange_token_count))
+        if return_orange_fraction:
+            score_dict.update(dict(orange_fraction=(orange_token_count / num_tokens_scored)))
+        if return_green_z_score:
+            score_dict.update(dict(green_z_score=green_z_score))
+        if return_orange_z_score:
+            score_dict.update(dict(orange_z_score=orange_z_score))
         if return_p_value:
-            z_score = score_dict.get("z_score")
-            if z_score is None:
-                z_score = self._compute_z_score(green_token_count, num_tokens_scored)
-            score_dict.update(dict(p_value=self._compute_p_value(z_score)))
-        sim_score=green_token_count / num_tokens_scored
-        gr_sim_score=np.array(sim_score)
-        return score_dict, gr_sim_score,None, mark
+            green_p_value = self._compute_p_value(green_z_score) if green_z_score is not None else None
+            orange_p_value = self._compute_p_value(orange_z_score) if orange_z_score is not None else None
+            score_dict.update(dict(green_p_value=green_p_value, orange_p_value=orange_p_value))
+
+        sim_score = green_token_count / num_tokens_scored
+        orange_score = orange_token_count / num_tokens_scored  # Added for debugging/analysis
+        gr_sim_score = np.array(sim_score)
+
+        return score_dict, gr_sim_score, orange_score, mark
+
 
     def detect(
             self,
@@ -361,11 +505,11 @@ class WatermarkDetector_with_preferance(WatermarkBase):
             
         output_dict = {}
         # print("in _tokenized:", tokenized_text.shape)
-        score_dict, gr_score,_, mark = self._score_sequence(tokenized_text, **kwargs)
+        score_dict, gr_sim_score, orange_sim_score, mark = self._score_sequence(tokenized_text, **kwargs)
         if return_scores:
             output_dict.update(score_dict)
 
-        return output_dict, gr_score, mark
+        return output_dict, gr_sim_score, orange_sim_score, mark
 
 
             # print(tokenized_text)

@@ -13,6 +13,7 @@ from attack import attack_process
 import read_json
 from tqdm import tqdm
 import torch
+from torch.nn import functional
 torch.manual_seed(123)
 if torch.backends.mps.is_available():
     device = torch.device('mps')
@@ -281,9 +282,16 @@ def generate(prompt, args, model=None, device=None, tokenizer=None,index=None, t
         raise ValueError("Error: 'title' cannot be None.")
     gen_kwargs = dict(max_new_tokens=args.max_new_tokens,min_new_tokens=args.min_new_tokens)
 
+    embedding_matrix = functional.normalize(model.get_input_embeddings().weight.to('cuda:1'), p=2,dim=1)
+    cos_sim = embedding_matrix @ embedding_matrix.T
+    cos_sim = cos_sim.cpu().detach().numpy()
+    print(cos_sim)
+    exit(0)
+
     watermark_processor = WatermarkLogitsProcessor_with_preferance(title=title,
                                                                 paperlist=paperlist,
                                                                 vocab=list(tokenizer.get_vocab().values()),
+                                                                cos_sim=cos_sim,
                                                                 args=args
                                                                 )
     if args.use_sampling:
@@ -361,10 +369,11 @@ def detect(input_text, args, device=None, tokenizer=None, title=None, paperlist=
                                                            ignore_repeated_bigrams=args.ignore_repeated_bigrams,
                                                            select_green_tokens=args.select_green_tokens,
                                                            title=title,
+                                                           paperlist = paperlist,
                                                            args=args)
     
-    score_dict, gr_score, mark = watermark_detector.detect(input_text)
-    return score_dict, gr_score, mark
+    output_dict, gr_sim_score, orange_sim_score, mark= watermark_detector.detect(input_text)
+    return output_dict, gr_sim_score, orange_sim_score, mark
         # output = str_format_scores(score_dict, watermark_detector.z_threshold)
         #output = list_format_scores(score_dict, watermark_detector.z_threshold)
     
@@ -395,8 +404,9 @@ def safe_serialize(obj):
 
 def main(args):
     # Load datasets
-    checkpoint_file = f"checkpoint/checkpoint_new_{args.gamma}_GD3_human.json"
-    output_file = f"checkpoint/peer_review_outputs_{args.gamma}_GD3_human.json"
+    #ye hai : 
+    checkpoint_file = f"checkpoint/checkpoint_new_{args.gamma}_GD3_orange_z15score_Updated.json"
+    output_file = f"checkpoint/peer_review_outputs_{args.gamma}_GD3_orange_z15score_Updated.json"
     model, tokenizer, device = load_model(args)
 
     # Load existing progress if checkpoint exists
@@ -422,29 +432,6 @@ def main(args):
         abstract = each_dic['abstract']
         paper_text = each_dic['paper_text']
         paper_content = abstract + " "+ paper_text
-        terms_prompt = '''
-        You are a highly advanced AI specialized in scientific text processing. Your task is to extract **important technical terms** from a given research paper. These terms will be used for further analysis.
-
-        ### **Instructions:**
-        1️. **Extract the following types of terms:**
-        - **Technical Concepts** (e.g., "self-attention", "hyperparameter tuning", "zero-shot learning").
-        - **Mathematical & Statistical Terms** (e.g., "gradient descent", "log-likelihood estimation", "Bayes theorem").
-        - **Machine Learning/Dataset Names** (e.g., "ResNet", "BERT", "ImageNet", "MNIST").
-        - **Key Nouns & Phrases Related to the Paper's Topic** (e.g., "architecture design", "model convergence", "loss function").
-        - **Acronyms of Important Models & Techniques** (e.g., "LSTM", "CNN", "SVM", "GAN").
-        - **Scientific Terminology** (e.g., "thermodynamic equilibrium", "quantum entanglement", "protein folding" for relevant papers).
-
-        2️. **Do NOT include:**
-        - **Common Stopwords** (e.g., "and", "or", "the", "but", "therefore").
-        - **General Academic Phrases** (e.g., "this paper presents", "in conclusion", "as shown in Figure").
-        - **Adverbs or Common Verbs** (e.g., "significantly", "appears", "seems", "performs").
-        - **Generic Words Unrelated to the Paper’s Topic** (e.g., "data", "study", "results", "important", "analysis").
-
-        3️. **Output Format:**  
-        - Provide the extracted terms in a **single, comma-separated string** without duplicates.
-        
-        '''
-
         paperlist = tokenizer(paper_content)['input_ids']
 
         content = f''' The peer review format and length should be of standard conference. \\
@@ -468,6 +455,11 @@ def main(args):
             {"role": "user", "content": content},
         ]
 
+        embedding_matrix = functional.normalize(model.get_input_embeddings().weight.to(device), p=2,dim=1)
+        cos_sim = embedding_matrix @ embedding_matrix.T
+        cos_sim = cos_sim.cpu().detach().numpy()
+
+        
         # Generate outputs
         input_token_num, output_token_num, _, _, decoded_output_without_watermark, decoded_output_with_watermark, watermark_processor, _ = generate(
             input_text,
@@ -475,12 +467,16 @@ def main(args):
             model=model,
             device=device,
             tokenizer=tokenizer,
+            
             title=title,
-            paperlist= paperlist
+            paperlist= paperlist,
+            cos_sim = cos_sim
+
         )
         decoded_output_without_watermark = decoded_output_without_watermark.split("START OF REVIEW:assistant\n")[-1].strip()
 
         decoded_output_with_watermark = decoded_output_with_watermark.split("START OF REVIEW:assistant\n")[-1].strip()
+
         ##Attack
         if args.attack_ep==0:
             pass
@@ -499,7 +495,7 @@ def main(args):
             max_sim = 0
             max_sim_idx = -1
             
-            output_dict_with, gr_score_with, mark = detect(
+            output_dict_with, gr_score_with, or_score_with, mark = detect(
                 decoded_output_with_watermark,
                 args,
                 device=device,
@@ -507,7 +503,7 @@ def main(args):
                 title=title,
                 paperlist=paperlist
             )
-            output_dict_without, gr_score_without, mark = detect(
+            output_dict_without, gr_score_without, or_score_without, mark = detect(
                 decoded_output_without_watermark,
                 args,
                 device=device,
@@ -524,6 +520,8 @@ def main(args):
             "peer_review_with_watermark": decoded_output_with_watermark,
             "gr_score_with": safe_serialize(gr_score_with),  # Serialize safely
             "gr_score_without": safe_serialize(gr_score_without),  # Serialize safely
+            "or_score_with": safe_serialize(or_score_with),
+            "or_score_without": safe_serialize(or_score_without),
             "output_without": safe_serialize(output_dict_without),
             "output_with": safe_serialize(output_dict_with)
         }

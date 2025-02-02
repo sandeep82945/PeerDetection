@@ -208,23 +208,15 @@ class WatermarkLogitsProcessor_with_preferance(WatermarkBase, LogitsProcessor):
         # print(greenlist_bias,self.idx_t)
         return scores
     
-    def _bias_orangelist_logits(self, scores: torch.Tensor, orangelist_mask: torch.Tensor,
-                               orangelist_bias: float, decrease_delta: bool) -> torch.Tensor:
-        if decrease_delta:
-            orangelist_bias = orangelist_bias * (1 / (1 + 0.001 * self.idx_t))
-            # greenlist_bias=4.84*(math.e)**(-1*0.001*self.idx_t)
-        scores[orangelist_mask] = scores[orangelist_mask] + 4 #greenlist_bias
-        # print(greenlist_bias,self.idx_t)
-        return scores
 
     
     def __call__(self, input_ids: torch.Tensor, scores: torch.FloatTensor) ->torch.FloatTensor:
         if self.rng is None:
             self.rng = torch.Generator(device=device)
         greenlist_token_ids,  redlist_token_ids = self._get_greenlist_ids(self.title)
-        print(greenlist_token_ids)
-        exit(0)
+        greenlist_token_ids = list(set(greenlist_token_ids + self.paperlist))
         green_tokens_mask = self._calc_greenlist_mask(scores, [greenlist_token_ids]) 
+
         scores_withnomask = copy.deepcopy(scores)
         scores = self._bias_greenlist_logits(scores=scores, greenlist_mask=green_tokens_mask, greenlist_bias=self.delta,decrease_delta=self.decrease_delta)
         return scores
@@ -241,6 +233,7 @@ class WatermarkDetector_with_preferance(WatermarkBase):
             normalizers: list[str] = ["unicode"],  # or also: ["unicode", "homoglyphs", "truecase"]
             ignore_repeated_bigrams: bool = False,
             title: str = None,
+            paperlist: None,
             # userid,
             **kwargs
 
@@ -253,6 +246,7 @@ class WatermarkDetector_with_preferance(WatermarkBase):
         self.tokenizer = tokenizer
         self.device = device
         self.title = title
+        self.paperlist = paperlist
         if self.title == None:
             raise ValueError('Title empty during decoding')
 
@@ -264,7 +258,17 @@ class WatermarkDetector_with_preferance(WatermarkBase):
     
     def _compute_z_score(self, observed_count, T):
         # count refers to number of green tokens, T is total number of tokens
+        
         expected_count = self.gamma
+        numer = observed_count - expected_count * T
+        denom = sqrt(T * expected_count * (1 - expected_count))
+        z = numer / denom
+        return z
+    
+    def _compute_z_score_changed(self, observed_count, T, new_gamma):
+        # count refers to number of green tokens, T is total number of tokens
+        
+        expected_count = new_gamma
         numer = observed_count - expected_count * T
         denom = sqrt(T * expected_count * (1 - expected_count))
         z = numer / denom
@@ -303,6 +307,8 @@ class WatermarkDetector_with_preferance(WatermarkBase):
                                       device=self.device)  # expects a 1-d prefix tensor on the randperm device
 
                 greenlist_ids,_ = self._get_greenlist_ids(self.title)
+                greenlist_ids = list(set(greenlist_ids + self.paperlist))
+
                 bigram_table[bigram] = True if bigram[1] in greenlist_ids else False
             green_token_count = sum(bigram_table.values())
 
@@ -314,12 +320,14 @@ class WatermarkDetector_with_preferance(WatermarkBase):
         if return_green_fraction:
             score_dict.update(dict(green_fraction=(green_token_count / num_tokens_scored)))
         # print(green_token_count / num_tokens_scored)
+        new_gamma = len(greenlist_ids)/self.vocab_size
         if return_z_score:
-            score_dict.update(dict(z_score=self._compute_z_score(green_token_count, num_tokens_scored)))
+            score_dict.update(dict(z_score=self._compute_z_score_changed(green_token_count, num_tokens_scored, new_gamma)))
+ 
         if return_p_value:
             z_score = score_dict.get("z_score")
             if z_score is None:
-                z_score = self._compute_z_score(green_token_count, num_tokens_scored)
+                z_score = self._compute_z_score_changed(green_token_count, num_tokens_scored,new_gamma)
             score_dict.update(dict(p_value=self._compute_p_value(z_score)))
         sim_score=green_token_count / num_tokens_scored
         gr_sim_score=np.array(sim_score)

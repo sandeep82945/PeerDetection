@@ -9,7 +9,7 @@ import json
 from collections import Counter
 
 # Load the dataset from the JSON file
-with open('checkpoint/peer_review_outputs_0.3_GD2.json', 'r') as file:
+with open('/DATA/priyanshu_2021cs26/san/ACL2025/PeerDetection/code/checkpoint/peer_review_outputs_0.4_GD3_Greeen_paper.json', 'r') as file:
     data = json.load(file)
 
 # Extract features and labels from the dataset

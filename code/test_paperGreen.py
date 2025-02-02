@@ -8,7 +8,7 @@ from functools import partial
 from pandas.core.frame import DataFrame 
 import pandas as pd
 import numpy  # for gradio hot reload
-from watermark_processor import WatermarkLogitsProcessor_with_preferance, WatermarkDetector_with_preferance
+from watermark_processor_Green import WatermarkLogitsProcessor_with_preferance, WatermarkDetector_with_preferance
 from attack import attack_process
 import read_json
 from tqdm import tqdm
@@ -361,6 +361,7 @@ def detect(input_text, args, device=None, tokenizer=None, title=None, paperlist=
                                                            ignore_repeated_bigrams=args.ignore_repeated_bigrams,
                                                            select_green_tokens=args.select_green_tokens,
                                                            title=title,
+                                                           paperlist=paperlist,
                                                            args=args)
     
     score_dict, gr_score, mark = watermark_detector.detect(input_text)
@@ -395,8 +396,8 @@ def safe_serialize(obj):
 
 def main(args):
     # Load datasets
-    checkpoint_file = f"checkpoint/checkpoint_new_{args.gamma}_GD3_human.json"
-    output_file = f"checkpoint/peer_review_outputs_{args.gamma}_GD3_human.json"
+    checkpoint_file = f"checkpoint/checkpoint_new_{args.gamma}_GD3_Greeen_paper.json"
+    output_file = f"checkpoint/peer_review_outputs_{args.gamma}_GD3_Greeen_paper.json"
     model, tokenizer, device = load_model(args)
 
     # Load existing progress if checkpoint exists
@@ -422,29 +423,6 @@ def main(args):
         abstract = each_dic['abstract']
         paper_text = each_dic['paper_text']
         paper_content = abstract + " "+ paper_text
-        terms_prompt = '''
-        You are a highly advanced AI specialized in scientific text processing. Your task is to extract **important technical terms** from a given research paper. These terms will be used for further analysis.
-
-        ### **Instructions:**
-        1️. **Extract the following types of terms:**
-        - **Technical Concepts** (e.g., "self-attention", "hyperparameter tuning", "zero-shot learning").
-        - **Mathematical & Statistical Terms** (e.g., "gradient descent", "log-likelihood estimation", "Bayes theorem").
-        - **Machine Learning/Dataset Names** (e.g., "ResNet", "BERT", "ImageNet", "MNIST").
-        - **Key Nouns & Phrases Related to the Paper's Topic** (e.g., "architecture design", "model convergence", "loss function").
-        - **Acronyms of Important Models & Techniques** (e.g., "LSTM", "CNN", "SVM", "GAN").
-        - **Scientific Terminology** (e.g., "thermodynamic equilibrium", "quantum entanglement", "protein folding" for relevant papers).
-
-        2️. **Do NOT include:**
-        - **Common Stopwords** (e.g., "and", "or", "the", "but", "therefore").
-        - **General Academic Phrases** (e.g., "this paper presents", "in conclusion", "as shown in Figure").
-        - **Adverbs or Common Verbs** (e.g., "significantly", "appears", "seems", "performs").
-        - **Generic Words Unrelated to the Paper’s Topic** (e.g., "data", "study", "results", "important", "analysis").
-
-        3️. **Output Format:**  
-        - Provide the extracted terms in a **single, comma-separated string** without duplicates.
-        
-        '''
-
         paperlist = tokenizer(paper_content)['input_ids']
 
         content = f''' The peer review format and length should be of standard conference. \\
