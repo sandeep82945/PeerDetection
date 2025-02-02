@@ -1,7 +1,8 @@
 import pandas as pd
 import json
-with open('../try_1.json') as f:
+with open('../terms.json') as f:
     data = json.load(f)
+    return data
 
 
 # print(data[0]["title"])

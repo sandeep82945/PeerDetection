@@ -424,6 +424,9 @@ def main(args):
         paper_text = each_dic['paper_text']
         paper_content = abstract + " "+ paper_text
         paperlist = tokenizer(paper_content)['input_ids']
+        paperid = each_dic['paperid']
+
+        with open
 
         content = f''' The peer review format and length should be of standard conference. \\
             Steps to follow :- \\

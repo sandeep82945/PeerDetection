@@ -10,7 +10,7 @@ import pandas as pd
 import numpy  # for gradio hot reload
 from watermark_processor import WatermarkLogitsProcessor_with_preferance, WatermarkDetector_with_preferance
 from attack import attack_process
-import read_json
+import read_json, read_json_term
 from tqdm import tqdm
 import torch
 from torch.nn import functional
