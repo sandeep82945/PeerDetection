@@ -217,7 +217,7 @@ class WatermarkLogitsProcessor_with_preferance(WatermarkBase, LogitsProcessor):
         greenlist_token_ids = list(set(greenlist_token_ids + self.paperlist))
         green_tokens_mask = self._calc_greenlist_mask(scores, [greenlist_token_ids]) 
 
-        scores_withnomask = copy.deepcopy(scores)
+        #scores_withnomask = copy.deepcopy(scores)
         scores = self._bias_greenlist_logits(scores=scores, greenlist_mask=green_tokens_mask, greenlist_bias=self.delta,decrease_delta=self.decrease_delta)
         return scores
          
