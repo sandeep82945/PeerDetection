@@ -455,15 +455,16 @@ def main(args):
         ]
 
         # Generate outputs
-        input_token_num, output_token_num, _, _, decoded_output_without_watermark, decoded_output_with_watermark, watermark_processor, _ = generate(
-            input_text,
-            args,
-            model=model,
-            device=device,
-            tokenizer=tokenizer,
-            title=title,
-            paperlist= paperlist
-        )
+        with torch.no_grad():
+            input_token_num, output_token_num, _, _, decoded_output_without_watermark, decoded_output_with_watermark, watermark_processor, _ = generate(
+                input_text,
+                args,
+                model=model,
+                device=device,
+                tokenizer=tokenizer,
+                title=title,
+                paperlist= paperlist
+            )
         decoded_output_without_watermark = decoded_output_without_watermark.split("START OF REVIEW:assistant\n")[-1].strip()
 
         decoded_output_with_watermark = decoded_output_with_watermark.split("START OF REVIEW:assistant\n")[-1].strip()
