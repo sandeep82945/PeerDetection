@@ -577,15 +577,16 @@ def testppl(args):
         ]
 
         # Generate watermarked and baseline outputs
-        input_token_num, output_token_num, _, _, decoded_output_without_watermark, decoded_output_with_watermark, _, _ = generate(
-            input_text,
-            args,
-            model=model,
-            device=device,
-            tokenizer=tokenizer,
-            title=title,  # Title used to generate the green list
-            paper=abstract+ " "+ paper_text
-        )
+        with torch.no_grad():
+            input_token_num, output_token_num, _, _, decoded_output_without_watermark, decoded_output_with_watermark, _, _ = generate(
+                input_text,
+                args,
+                model=model,
+                device=device,
+                tokenizer=tokenizer,
+                title=title,  # Title used to generate the green list
+                paper=abstract+ " "+ paper_text
+            )
 
         # Concatenate input with the generated outputs
         input_p_output_wm = f"{decoded_output_with_watermark}"
