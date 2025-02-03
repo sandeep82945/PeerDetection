@@ -88,7 +88,7 @@ def read_old():
                 break
 
 
-        full_text = {"abstract": abstract, "paper_text":section_str, "title":title, "fileid": f{filename} }
+        full_text = {"abstract": abstract, "paper_text":section_str, "title":title, "paperid": filename}
 
         all_jsons.append(full_text)
     return all_jsons

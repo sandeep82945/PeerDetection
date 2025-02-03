@@ -422,28 +422,6 @@ def main(args):
         abstract = each_dic['abstract']
         paper_text = each_dic['paper_text']
         paper_content = abstract + " "+ paper_text
-        terms_prompt = '''
-        You are a highly advanced AI specialized in scientific text processing. Your task is to extract **important technical terms** from a given research paper. These terms will be used for further analysis.
-
-        ### **Instructions:**
-        1️. **Extract the following types of terms:**
-        - **Technical Concepts** (e.g., "self-attention", "hyperparameter tuning", "zero-shot learning").
-        - **Mathematical & Statistical Terms** (e.g., "gradient descent", "log-likelihood estimation", "Bayes theorem").
-        - **Machine Learning/Dataset Names** (e.g., "ResNet", "BERT", "ImageNet", "MNIST").
-        - **Key Nouns & Phrases Related to the Paper's Topic** (e.g., "architecture design", "model convergence", "loss function").
-        - **Acronyms of Important Models & Techniques** (e.g., "LSTM", "CNN", "SVM", "GAN").
-        - **Scientific Terminology** (e.g., "thermodynamic equilibrium", "quantum entanglement", "protein folding" for relevant papers).
-
-        2️. **Do NOT include:**
-        - **Common Stopwords** (e.g., "and", "or", "the", "but", "therefore").
-        - **General Academic Phrases** (e.g., "this paper presents", "in conclusion", "as shown in Figure").
-        - **Adverbs or Common Verbs** (e.g., "significantly", "appears", "seems", "performs").
-        - **Generic Words Unrelated to the Paper’s Topic** (e.g., "data", "study", "results", "important", "analysis").
-
-        3️. **Output Format:**  
-        - Provide the extracted terms in a **single, comma-separated string** without duplicates.
-        
-        '''
 
         paperlist = tokenizer(paper_content)['input_ids']
 

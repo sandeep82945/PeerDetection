@@ -396,8 +396,8 @@ def safe_serialize(obj):
 
 def main(args):
     # Load datasets
-    checkpoint_file = f"checkpoint_final/checkpoint_{args.gamma}_GD{args.delta}_Greeen_term.json"
-    output_file = f"result/Outputs_{args.gamma}_GD{args.delta}_Greeen_term.json"
+    checkpoint_file = f"checkpoint_final/checkpoint_{args.gamma}_GD{args.delta}_Greeen_term_without.json"
+    output_file = f"result/Outputs_{args.gamma}_GD{args.delta}_Greeen_term_without.json"
     model, tokenizer, device = load_model(args)
 
     # Load existing progress if checkpoint exists
@@ -429,6 +429,7 @@ def main(args):
         term_paper_data = term_data[paperid]
         #paperlist = tokenizer(paper_content)['input_ids']
         paperlist = tokenizer(term_paper_data)['input_ids']
+        paperlist = [] #Removing the paperids
         
         
 

@@ -204,7 +204,7 @@ class WatermarkLogitsProcessor_with_preferance(WatermarkBase, LogitsProcessor):
         if decrease_delta:
             greenlist_bias = greenlist_bias * (1 / (1 + 0.001 * self.idx_t))
             # greenlist_bias=4.84*(math.e)**(-1*0.001*self.idx_t)
-        scores[greenlist_mask] = scores[greenlist_mask] + 3 #greenlist_bias
+        scores[greenlist_mask] = scores[greenlist_mask] + self.delta #greenlist_bias
         # print(greenlist_bias,self.idx_t)
         return scores
     
