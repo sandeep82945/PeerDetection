@@ -73,3 +73,19 @@ Skipping already processed: LIPSCHITZ SINGULARITIES IN DIFFUSION MODELS
 Skipping already processed: TEXTFIELD3D: TOWARDS ENHANCING OPEN- VOCABULARY 3D GENERATION WITH NOISY TEXT FIELDS
 Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
 Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+From v4.47 onwards, when a model cache is to be returned, `generate` will return a `Cache` instance instead by default (as opposed to the legacy tuple of tuples format). If you want to keep returning the legacy format, please set `return_legacy_cache=True`.
+Processed: FINE-TUNING LANGUAGE MODELS FOR FACTUALITY REDUCES HALLUCINATION
+ 27%|██▋       | 70/263 [01:18<03:35,  1.12s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Processed: CODERS FOR INTRINSICALLY LOW-DIMENSIONAL DATA
+ 27%|██▋       | 71/263 [02:37<08:35,  2.68s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Processed: RingAttention with Blockwise Transformers for Near-Infinite Context
+ 27%|██▋       | 72/263 [04:02<15:46,  4.95s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Processed: QA-LORA: QUANTIZATION-AWARE LOW-RANK ADAPTATION OF LARGE LANGUAGE MODELS
+ 28%|██▊       | 73/263 [05:19<24:25,  7.72s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Processed: INTERPRETABLE DIFFUSION VIA INFORMATION DECOMPOSITION
+ 28%|██▊       | 74/263 [06:38<35:53, 11.39s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
