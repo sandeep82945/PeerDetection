@@ -1,0 +1,105 @@
+Skipping: Input too short (8 tokens).
+Attack skipped.
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:03<00:09,  3.09s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:06<00:06,  3.17s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:09<00:03,  3.15s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:10<00:00,  2.25s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:10<00:00,  2.58s/it]
+  0%|          | 0/546 [00:00<?, ?it/s] 48%|████▊     | 261/546 [00:00<00:00, 2599.94it/s] 96%|█████████▌| 522/546 [00:00<00:00, 2605.75it/s]100%|██████████| 546/546 [00:00<00:00, 2601.75it/s]
+  0%|          | 0/263 [00:00<?, ?it/s]Skipping already processed: CONCEPT BOTTLENECK GENERATIVE MODELS
+Skipping already processed: SWAP: SPARSE ENTROPIC WASSERSTEIN REGRESSION FOR ROBUST NETWORK PRUNING
+Skipping already processed: BEYOND IMITATION: LEVERAGING FINE-GRAINED QUALITY SIGNALS FOR ALIGNMENT
+Skipping already processed: GUAGE MODEL POWERED DIALOGUE AGENTS
+Skipping already processed: THE EFFECTIVENESS OF RANDOM FORGETTING FOR ROBUST GENERALIZATION
+Skipping already processed: SYMPHONY: SYMMETRY-EQUIVARIANT POINT- CENTERED SPHERICAL HARMONICS FOR MOLECULE GENERATION
+Skipping already processed: ONE-HOT GENERALIZED LINEAR MODEL FOR SWITCHING BRAIN STATE DISCOVERY
+Skipping already processed: DRM: MASTERING VISUAL REINFORCEMENT LEARN-
+Skipping already processed: ING VIA TASK-DRIVEN FEATURE SELECTION
+Skipping already processed: DYST: TOWARDS DYNAMIC NEURAL SCENE REPRESENTATIONS ON REAL-WORLD VIDEOS
+Skipping already processed: LEARNING MULTI-FACETED PROTOTYPICAL USER INTERESTS
+Skipping already processed: WIN-WIN: TRAINING HIGH-RESOLUTION VISION TRANSFORMERS
+Skipping already processed: FAKE IT TILL MAKE IT: FEDERATED LEARNING WITH CONSENSUS-ORIENTED GENERATION
+Skipping already processed: GIM: LEARNING GENERALIZABLE IMAGE MATCHER
+Skipping already processed: VERA: VECTOR-BASED RANDOM MATRIX ADAPTATION
+Skipping already processed: FANTASTIC GENERALIZATION MEASURES
+Skipping already processed: STEVE-EYE: EQUIPPING LLM-BASED EMBOD-
+Skipping already processed: PERCEPTUAL GROUP TOKENIZER: BUILDING PERCEPTION WITH ITERATIVE GROUPING
+Skipping already processed: FOSI: Hybrid First and Second Order Optimization
+Skipping already processed: UNLEASHING LARGE-SCALE VIDEO GENERATIVE PRE-TRAINING FOR VISUAL ROBOT MANIPULATION
+Skipping already processed: DOUBLY ROBUST INSTANCE-REWEIGHTED ADVERSARIAL TRAINING
+Skipping already processed: GENSIM: GENERATING ROBOTIC SIMULATION TASKS VIA LARGE LANGUAGE MODELS
+Skipping already processed: COT3DREF: CHAIN-OF-THOUGHTS DATA-EFFICIENT 3D VISUAL GROUNDING
+Skipping already processed: REWARD DESIGN FOR JUSTIFIABLE SEQUENTIAL DECISION-MAKING
+Skipping already processed: ERAL GEOMETRY FOR KNOWLEDGE DISTILLATION
+Skipping already processed: TAPMO: SHAPE-AWARE MOTION GENERATION OF SKELETON-FREE CHARACTERS
+Skipping already processed: DiLu : A Knowledge-Driven Approach to Autonomous Driving with Large Language Models
+Skipping already processed: RTFS-NET: RECURRENT TIME-FREQUENCY MOD-
+Skipping already processed: SOHES: SELF-SUPERVISED OPEN-WORLD HIERARCHICAL ENTITY SEGMENTATION
+Skipping already processed: PRE-TRAINING WITH SYNTHETIC DATA HELPS OFFLINE REINFORCEMENT LEARNING
+Skipping already processed: CROSSQ: BATCH NORMALIZATION
+Skipping already processed: Never Train from Scratch: FAIR COMPARISON OF LONG- SEQUENCE MODELS REQUIRES DATA-DRIVEN PRIORS
+Skipping already processed: LEMUR: INTEGRATING LARGE LANGUAGE MODELS
+Skipping already processed: MOVINGPARTS: MOTION-BASED 3D PART DISCOV-
+Skipping already processed: EARLY NEURON ALIGNMENT IN TWO-LAYER RELU NETWORKS WITH SMALL INITIALIZATION
+Skipping already processed: SIVE NEURAL NETWORK GENERATION
+Skipping already processed: SPURIOUS FEATURES IN PROMPT DESIGN or: How I learned to start worrying about prompt formatting
+Skipping already processed: ERROR-FREE DIFFERENTIABLE SWAP FUNCTIONS
+Skipping already processed: WEAKER MVI CONDITION: EXTRAGRADIENT METH-
+Skipping already processed: TAIL: TASK-SPECIFIC ADAPTERS FOR IMITATION LEARNING WITH LARGE PRETRAINED MODELS
+Skipping already processed: ZERO-MEAN REGULARIZED SPECTRAL CONTRASTIVE LEARNING: IMPLICITLY MITIGATING WRONG CON-
+Skipping already processed: RDESIGN: HIERARCHICAL DATA-EFFICIENT REPRE-
+Skipping already processed: ONE-TO-MANY POLICY TRANSFER
+Skipping already processed: WHAT’S IN MY BIG DATA?
+Skipping already processed: COMPLEX PRIORS AND FLEXIBLE INFERENCE IN RECURRENT CIRCUITS WITH DENDRITIC NONLINEARITIES
+Skipping already processed: DEMYSTIFYING LOCAL & GLOBAL FAIRNESS TRADE-OFFS IN FEDERATED LEARNING USING PARTIAL INFORMATION DECOMPOSITION
+Skipping already processed: INCREMENTAL RANDOMIZED SMOOTHING CERTIFICATION
+Skipping already processed: SELF-CONSUMING GENERATIVE MODELS GO MAD
+Skipping already processed: IDEAL: INFLUENCE-DRIVEN SELECTIVE ANNOTA- TIONS EMPOWER IN-CONTEXT LEARNERS IN LARGE LANGUAGE MODELS
+Skipping already processed: TOWARDS TRANSPARENT TIME SERIES FORECASTING
+Skipping already processed: DOLA: DECODING BY CONTRASTING LAYERS IMPROVES FACTUALITY IN LARGE LANGUAGE MODELS
+Skipping already processed: DOUBLY ROBUST PROXIMAL CAUSAL LEARNING FOR CONTINUOUS TREATMENTS
+Skipping already processed: GEOLLM: EXTRACTING GEOSPATIAL KNOWLEDGE FROM LARGE LANGUAGE MODELS
+Skipping already processed: PLUG-AND-PLAY: AN EFFICIENT POST-TRAINING PRUNING METHOD FOR LARGE LANGUAGE MODELS
+Skipping already processed: TEST: TEXT PROTOTYPE ALIGNED EMBEDDING TO ACTIVATE LLM’S ABILITY FOR TIME SERIES
+Skipping already processed: SHARING RATIO DECOMPOSITION
+Skipping already processed: CROSSLOCO: HUMAN MOTION DRIVEN CONTROL OF LEGGED ROBOTS VIA GUIDED UNSUPERVISED REIN-
+Skipping already processed: A PRECISE CHARACTERIZATION OF SGD STABILITY USING LOSS SURFACE GEOMETRY
+Skipping already processed: DON’T TRUST: VERIFY – GROUNDING LLM QUANTI-
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+ 22%|██▏       | 59/263 [00:00<00:01, 116.94it/s]
+Traceback (most recent call last):
+  File "/workspace/PeerDetection/code/test_paperGreen_without.py", line 633, in <module>
+    main(args)
+  File "/workspace/PeerDetection/code/test_paperGreen_without.py", line 458, in main
+    input_token_num, output_token_num, _, _, decoded_output_without_watermark, decoded_output_with_watermark, watermark_processor, _ = generate(
+  File "/workspace/PeerDetection/code/test_paperGreen_without.py", line 327, in generate
+    output_without_watermark = generate_without_watermark(**tokd_input)
+  File "/venv/main/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+  File "/venv/main/lib/python3.10/site-packages/transformers/generation/utils.py", line 2255, in generate
+    result = self._sample(
+  File "/venv/main/lib/python3.10/site-packages/transformers/generation/utils.py", line 3254, in _sample
+    outputs = self(**model_inputs, return_dict=True)
+  File "/venv/main/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/venv/main/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/venv/main/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 831, in forward
+    outputs = self.model(
+  File "/venv/main/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/venv/main/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/venv/main/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 589, in forward
+    layer_outputs = decoder_layer(
+  File "/venv/main/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/venv/main/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/venv/main/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 332, in forward
+    hidden_states, self_attn_weights = self.self_attn(
+  File "/venv/main/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/venv/main/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/venv/main/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 288, in forward
+    attn_output, attn_weights = attention_interface(
+  File "/venv/main/lib/python3.10/site-packages/transformers/integrations/sdpa_attention.py", line 62, in sdpa_attention_forward
+    attn_output = attn_output.transpose(1, 2).contiguous()
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 174.00 MiB. GPU 0 has a total capacity of 39.38 GiB of which 159.44 MiB is free. Process 1753452 has 21.56 GiB memory in use. Process 1759069 has 17.64 GiB memory in use. Of the allocated memory 16.71 GiB is allocated by PyTorch, and 444.08 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
