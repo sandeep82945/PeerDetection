@@ -322,19 +322,19 @@ def generate(prompt, args, model=None, device=None, tokenizer=None,index=None, t
     
     if isinstance(tokd_input, torch.Tensor):
         tokd_input = {"input_ids": tokd_input}
-    
-    torch.manual_seed(args.generation_seed)
-    output_without_watermark = generate_without_watermark(**tokd_input)
-    decoded_output_without_watermark = tokenizer.batch_decode(output_without_watermark, skip_special_tokens=True)[0]
 
-    torch.manual_seed(args.generation_seed)
-    out = generate_with_watermark(**tokd_input)
-    torch.manual_seed(args.generation_seed)
-    output_with_watermark = out[0]
-    decoded_output_with_watermark = tokenizer.batch_decode(output_with_watermark, skip_special_tokens=True)[0]
-    
-    truncation_warning = True if tokd_input["input_ids"].shape[-1] == args.prompt_max_length else False
-    redecoded_input = tokenizer.batch_decode(tokd_input["input_ids"], skip_special_tokens=True)[0]
+    with torch.no_grad():
+        torch.manual_seed(args.generation_seed)
+        output_without_watermark = generate_without_watermark(**tokd_input)
+        decoded_output_without_watermark = tokenizer.batch_decode(output_without_watermark, skip_special_tokens=True)[0]
+        torch.manual_seed(args.generation_seed)
+        out = generate_with_watermark(**tokd_input)
+        torch.manual_seed(args.generation_seed)
+        output_with_watermark = out[0]
+        decoded_output_with_watermark = tokenizer.batch_decode(output_with_watermark, skip_special_tokens=True)[0]
+        
+        truncation_warning = True if tokd_input["input_ids"].shape[-1] == args.prompt_max_length else False
+        redecoded_input = tokenizer.batch_decode(tokd_input["input_ids"], skip_special_tokens=True)[0]
 
     # print(decoded_output_with_watermark)
     # print("----------------------------------------------")
