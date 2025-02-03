@@ -13,6 +13,7 @@ from attack import attack_process
 import read_json, read_json_term
 from tqdm import tqdm
 import torch
+import gc
 torch.manual_seed(123)
 if torch.backends.mps.is_available():
     device = torch.device('mps')
@@ -343,8 +344,8 @@ def generate(prompt, args, model=None, device=None, tokenizer=None,index=None, t
             output_with_watermark.shape[-1],
             redecoded_input,
             int(truncation_warning),
-            decoded_output_without_watermark,
-            decoded_output_with_watermark,
+            decoded_output_without_watermark.cpu(),
+            decoded_output_with_watermark.cpu(),
             watermark_processor,
             args)
 
@@ -520,6 +521,13 @@ def main(args):
         with open(checkpoint_file, "w") as f:
             json.dump(processed_data, f, indent=4)
 
+        del decoded_output_without_watermark
+        del decoded_output_with_watermark
+        del watermark_processor
+        del input_token_num
+        del output_token_num
+        torch.cuda.empty_cache()
+        gc.collect()
         print(f"Processed: {title}")
 
     # Save the final results to the output file
