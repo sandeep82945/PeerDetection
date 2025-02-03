@@ -1,0 +1,57 @@
+Skipping: Input too short (8 tokens).
+Attack skipped.
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:03<00:10,  3.39s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:07<00:07,  3.72s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:10<00:03,  3.63s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:11<00:00,  2.58s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:11<00:00,  2.96s/it]
+  0%|          | 0/546 [00:00<?, ?it/s] 44%|████▍     | 242/546 [00:00<00:00, 2410.16it/s] 89%|████████▊ | 484/546 [00:00<00:00, 2401.00it/s]100%|██████████| 546/546 [00:00<00:00, 2399.75it/s]
+  0%|          | 0/263 [00:00<?, ?it/s]Skipping already processed: CONCEPT BOTTLENECK GENERATIVE MODELS
+Skipping already processed: SWAP: SPARSE ENTROPIC WASSERSTEIN REGRESSION FOR ROBUST NETWORK PRUNING
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+From v4.47 onwards, when a model cache is to be returned, `generate` will return a `Cache` instance instead by default (as opposed to the legacy tuple of tuples format). If you want to keep returning the legacy format, please set `return_legacy_cache=True`.
+Processed: BEYOND IMITATION: LEVERAGING FINE-GRAINED QUALITY SIGNALS FOR ALIGNMENT
+  1%|          | 3/263 [01:37<2:21:23, 32.63s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Processed: GUAGE MODEL POWERED DIALOGUE AGENTS
+  2%|▏         | 4/263 [03:17<3:54:38, 54.36s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Processed: THE EFFECTIVENESS OF RANDOM FORGETTING FOR ROBUST GENERALIZATION
+  2%|▏         | 5/263 [04:59<4:57:52, 69.27s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Processed: SYMPHONY: SYMMETRY-EQUIVARIANT POINT- CENTERED SPHERICAL HARMONICS FOR MOLECULE GENERATION
+  2%|▏         | 6/263 [06:20<5:12:00, 72.84s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Processed: ONE-HOT GENERALIZED LINEAR MODEL FOR SWITCHING BRAIN STATE DISCOVERY
+  3%|▎         | 7/263 [08:13<6:03:12, 85.13s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Processed: DRM: MASTERING VISUAL REINFORCEMENT LEARN-
+  3%|▎         | 8/263 [10:00<6:30:33, 91.90s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Processed: ING VIA TASK-DRIVEN FEATURE SELECTION
+  3%|▎         | 9/263 [12:47<8:05:15, 114.63s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Processed: DYST: TOWARDS DYNAMIC NEURAL SCENE REPRESENTATIONS ON REAL-WORLD VIDEOS
+  4%|▍         | 10/263 [14:35<7:55:31, 112.77s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Processed: LEARNING MULTI-FACETED PROTOTYPICAL USER INTERESTS
+  4%|▍         | 11/263 [16:21<7:45:25, 110.82s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Processed: WIN-WIN: TRAINING HIGH-RESOLUTION VISION TRANSFORMERS
+  5%|▍         | 12/263 [18:12<7:42:52, 110.65s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Processed: FAKE IT TILL MAKE IT: FEDERATED LEARNING WITH CONSENSUS-ORIENTED GENERATION
+  5%|▍         | 13/263 [19:55<7:31:31, 108.37s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Processed: GIM: LEARNING GENERALIZABLE IMAGE MATCHER
+  5%|▌         | 14/263 [21:38<7:22:47, 106.70s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Processed: VERA: VECTOR-BASED RANDOM MATRIX ADAPTATION
+  6%|▌         | 15/263 [23:01<6:52:07, 99.71s/it] Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Processed: FANTASTIC GENERALIZATION MEASURES
+  6%|▌         | 16/263 [24:55<7:07:51, 103.93s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Processed: STEVE-EYE: EQUIPPING LLM-BASED EMBOD-
+  6%|▋         | 17/263 [26:41<7:09:31, 104.76s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Processed: PERCEPTUAL GROUP TOKENIZER: BUILDING PERCEPTION WITH ITERATIVE GROUPING
+  7%|▋         | 18/263 [28:20<7:00:12, 102.91s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
