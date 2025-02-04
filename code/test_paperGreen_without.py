@@ -339,9 +339,11 @@ def generate(prompt, args, model=None, device=None, tokenizer=None,index=None, t
     # print(decoded_output_with_watermark)
     # print("----------------------------------------------")
     # print(decoded_output_without_watermark)
-    return (tokd_input["input_ids"].shape[-1],
-            output_with_watermark.shape[-1],
-            redecoded_input,
+    del tokd_input, output_without_watermark, output_with_watermark, out
+    torch.cuda.empty_cache()
+    import gc
+    gc.collect()
+    return (redecoded_input,
             int(truncation_warning),
             decoded_output_without_watermark,
             decoded_output_with_watermark,
@@ -456,7 +458,7 @@ def main(args):
 
         # Generate outputs
         with torch.no_grad():
-            input_token_num, output_token_num, _, _, decoded_output_without_watermark, decoded_output_with_watermark, watermark_processor, _ = generate(
+            _, _, decoded_output_without_watermark, decoded_output_with_watermark, watermark_processor, _ = generate(
                 input_text,
                 args,
                 model=model,
@@ -517,6 +519,11 @@ def main(args):
 
         processed_data.append(result)
         processed_titles.add(title)
+
+        del paperlist
+        torch.cuda.empty_cache()
+        import gc
+        gc.collect()
 
         # Save checkpoint after each iteration
         with open(checkpoint_file, "w") as f:
