@@ -55,3 +55,8 @@ Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
 Processed: PERCEPTUAL GROUP TOKENIZER: BUILDING PERCEPTION WITH ITERATIVE GROUPING
   7%|▋         | 18/263 [28:20<7:00:12, 102.91s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
 Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Processed: FOSI: Hybrid First and Second Order Optimization
+  7%|▋         | 19/263 [31:41<8:58:21, 132.38s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+Processed: UNLEASHING LARGE-SCALE VIDEO GENERATIVE PRE-TRAINING FOR VISUAL ROBOT MANIPULATION
+  8%|▊         | 20/263 [33:30<8:27:11, 125.23s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
