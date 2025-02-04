@@ -344,8 +344,8 @@ def generate(prompt, args, model=None, device=None, tokenizer=None,index=None, t
             output_with_watermark.shape[-1],
             redecoded_input,
             int(truncation_warning),
-            decoded_output_without_watermark.cpu(),
-            decoded_output_with_watermark.cpu(),
+            decoded_output_without_watermark,
+            decoded_output_with_watermark,
             watermark_processor,
             args)
 
