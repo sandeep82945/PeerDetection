@@ -12,7 +12,7 @@ from collections import Counter
 # 1. Data Loading and Preprocessing
 # ---------------------------
 # Load the dataset from the JSON file
-with open('/DATA/priyanshu_2021cs26/san/ACL2025/PeerDetection/code/checkpoint/peer_review_outputs_0.4_GD3_Greeen_paper.json', 'r') as file:
+with open('result/Outputs_0.4_GD3.0_Greeen_term.json', 'r') as file:
     data = json.load(file)
 
 # Extract features and labels from the dataset
@@ -113,7 +113,7 @@ for train_val_index, test_index in skf.split(features, labels):
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-4)
     
-    patience = 50         # Number of epochs to wait for improvement
+    patience = 500       # Number of epochs to wait for improvement
     best_val_loss = float('inf')
     epochs_without_improvement = 0
     num_epochs = 10000

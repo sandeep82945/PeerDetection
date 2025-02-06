@@ -1,128 +1,0 @@
-Skipping: Input too short (8 tokens).
-Attack skipped.
-Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:02<00:07,  2.53s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:05<00:05,  2.61s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:07<00:02,  2.68s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:08<00:00,  1.94s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:08<00:00,  2.19s/it]
-  0%|          | 0/546 [00:00<?, ?it/s] 48%|████▊     | 264/546 [00:00<00:00, 2623.01it/s] 97%|█████████▋| 528/546 [00:00<00:00, 2629.47it/s]100%|██████████| 546/546 [00:00<00:00, 2624.09it/s]
-  0%|          | 0/263 [00:00<?, ?it/s]Skipping already processed: CONCEPT BOTTLENECK GENERATIVE MODELS
-Skipping already processed: SWAP: SPARSE ENTROPIC WASSERSTEIN REGRESSION FOR ROBUST NETWORK PRUNING
-Skipping already processed: BEYOND IMITATION: LEVERAGING FINE-GRAINED QUALITY SIGNALS FOR ALIGNMENT
-Skipping already processed: GUAGE MODEL POWERED DIALOGUE AGENTS
-Skipping already processed: THE EFFECTIVENESS OF RANDOM FORGETTING FOR ROBUST GENERALIZATION
-Skipping already processed: SYMPHONY: SYMMETRY-EQUIVARIANT POINT- CENTERED SPHERICAL HARMONICS FOR MOLECULE GENERATION
-Skipping already processed: ONE-HOT GENERALIZED LINEAR MODEL FOR SWITCHING BRAIN STATE DISCOVERY
-Skipping already processed: DRM: MASTERING VISUAL REINFORCEMENT LEARN-
-Skipping already processed: ING VIA TASK-DRIVEN FEATURE SELECTION
-Skipping already processed: DYST: TOWARDS DYNAMIC NEURAL SCENE REPRESENTATIONS ON REAL-WORLD VIDEOS
-Skipping already processed: LEARNING MULTI-FACETED PROTOTYPICAL USER INTERESTS
-Skipping already processed: WIN-WIN: TRAINING HIGH-RESOLUTION VISION TRANSFORMERS
-Skipping already processed: FAKE IT TILL MAKE IT: FEDERATED LEARNING WITH CONSENSUS-ORIENTED GENERATION
-Skipping already processed: GIM: LEARNING GENERALIZABLE IMAGE MATCHER
-Skipping already processed: VERA: VECTOR-BASED RANDOM MATRIX ADAPTATION
-Skipping already processed: FANTASTIC GENERALIZATION MEASURES
-Skipping already processed: STEVE-EYE: EQUIPPING LLM-BASED EMBOD-
-Skipping already processed: PERCEPTUAL GROUP TOKENIZER: BUILDING PERCEPTION WITH ITERATIVE GROUPING
-Skipping already processed: FOSI: Hybrid First and Second Order Optimization
-Skipping already processed: UNLEASHING LARGE-SCALE VIDEO GENERATIVE PRE-TRAINING FOR VISUAL ROBOT MANIPULATION
-Skipping already processed: DOUBLY ROBUST INSTANCE-REWEIGHTED ADVERSARIAL TRAINING
-Skipping already processed: GENSIM: GENERATING ROBOTIC SIMULATION TASKS VIA LARGE LANGUAGE MODELS
-Skipping already processed: COT3DREF: CHAIN-OF-THOUGHTS DATA-EFFICIENT 3D VISUAL GROUNDING
-Skipping already processed: REWARD DESIGN FOR JUSTIFIABLE SEQUENTIAL DECISION-MAKING
-Skipping already processed: ERAL GEOMETRY FOR KNOWLEDGE DISTILLATION
-Skipping already processed: TAPMO: SHAPE-AWARE MOTION GENERATION OF SKELETON-FREE CHARACTERS
-Skipping already processed: DiLu : A Knowledge-Driven Approach to Autonomous Driving with Large Language Models
-Skipping already processed: RTFS-NET: RECURRENT TIME-FREQUENCY MOD-
-Skipping already processed: SOHES: SELF-SUPERVISED OPEN-WORLD HIERARCHICAL ENTITY SEGMENTATION
-Skipping already processed: PRE-TRAINING WITH SYNTHETIC DATA HELPS OFFLINE REINFORCEMENT LEARNING
-Skipping already processed: CROSSQ: BATCH NORMALIZATION
-Skipping already processed: Never Train from Scratch: FAIR COMPARISON OF LONG- SEQUENCE MODELS REQUIRES DATA-DRIVEN PRIORS
-Skipping already processed: LEMUR: INTEGRATING LARGE LANGUAGE MODELS
-Skipping already processed: MOVINGPARTS: MOTION-BASED 3D PART DISCOV-
-Skipping already processed: EARLY NEURON ALIGNMENT IN TWO-LAYER RELU NETWORKS WITH SMALL INITIALIZATION
-Skipping already processed: SIVE NEURAL NETWORK GENERATION
-Skipping already processed: SPURIOUS FEATURES IN PROMPT DESIGN or: How I learned to start worrying about prompt formatting
-Skipping already processed: ERROR-FREE DIFFERENTIABLE SWAP FUNCTIONS
-Skipping already processed: WEAKER MVI CONDITION: EXTRAGRADIENT METH-
-Skipping already processed: TAIL: TASK-SPECIFIC ADAPTERS FOR IMITATION LEARNING WITH LARGE PRETRAINED MODELS
-Skipping already processed: ZERO-MEAN REGULARIZED SPECTRAL CONTRASTIVE LEARNING: IMPLICITLY MITIGATING WRONG CON-
-Skipping already processed: RDESIGN: HIERARCHICAL DATA-EFFICIENT REPRE-
-Skipping already processed: ONE-TO-MANY POLICY TRANSFER
-Skipping already processed: WHAT’S IN MY BIG DATA?
-Skipping already processed: COMPLEX PRIORS AND FLEXIBLE INFERENCE IN RECURRENT CIRCUITS WITH DENDRITIC NONLINEARITIES
-Skipping already processed: DEMYSTIFYING LOCAL & GLOBAL FAIRNESS TRADE-OFFS IN FEDERATED LEARNING USING PARTIAL INFORMATION DECOMPOSITION
-Skipping already processed: INCREMENTAL RANDOMIZED SMOOTHING CERTIFICATION
-Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-From v4.47 onwards, when a model cache is to be returned, `generate` will return a `Cache` instance instead by default (as opposed to the legacy tuple of tuples format). If you want to keep returning the legacy format, please set `return_legacy_cache=True`.
-Processed: SELF-CONSUMING GENERATIVE MODELS GO MAD
- 18%|█▊        | 48/263 [01:37<07:17,  2.04s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-Processed: IDEAL: INFLUENCE-DRIVEN SELECTIVE ANNOTA- TIONS EMPOWER IN-CONTEXT LEARNERS IN LARGE LANGUAGE MODELS
- 19%|█▊        | 49/263 [03:04<16:00,  4.49s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-Processed: TOWARDS TRANSPARENT TIME SERIES FORECASTING
- 19%|█▉        | 50/263 [04:19<25:52,  7.29s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-Processed: DOLA: DECODING BY CONTRASTING LAYERS IMPROVES FACTUALITY IN LARGE LANGUAGE MODELS
- 19%|█▉        | 51/263 [05:37<39:06, 11.07s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-Processed: DOUBLY ROBUST PROXIMAL CAUSAL LEARNING FOR CONTINUOUS TREATMENTS
- 20%|█▉        | 52/263 [06:57<56:10, 15.97s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-Processed: GEOLLM: EXTRACTING GEOSPATIAL KNOWLEDGE FROM LARGE LANGUAGE MODELS
- 20%|██        | 53/263 [08:24<1:18:41, 22.48s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-Processed: PLUG-AND-PLAY: AN EFFICIENT POST-TRAINING PRUNING METHOD FOR LARGE LANGUAGE MODELS
- 21%|██        | 54/263 [09:38<1:39:20, 28.52s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-Processed: TEST: TEXT PROTOTYPE ALIGNED EMBEDDING TO ACTIVATE LLM’S ABILITY FOR TIME SERIES
- 21%|██        | 55/263 [11:33<2:21:50, 40.91s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-Processed: SHARING RATIO DECOMPOSITION
- 21%|██▏       | 56/263 [13:14<2:55:47, 50.95s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-Processed: CROSSLOCO: HUMAN MOTION DRIVEN CONTROL OF LEGGED ROBOTS VIA GUIDED UNSUPERVISED REIN-
- 22%|██▏       | 57/263 [14:48<3:23:43, 59.34s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-Processed: A PRECISE CHARACTERIZATION OF SGD STABILITY USING LOSS SURFACE GEOMETRY
- 22%|██▏       | 58/263 [16:23<3:49:46, 67.25s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
-Processed: DON’T TRUST: VERIFY – GROUNDING LLM QUANTI-
- 22%|██▏       | 59/263 [17:58<4:10:24, 73.65s/it]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
- 22%|██▏       | 59/263 [17:58<1:02:09, 18.28s/it]
-Traceback (most recent call last):
-  File "/workspace/PeerDetection/code/test_paperGreen_without.py", line 634, in <module>
-    main(args)
-  File "/workspace/PeerDetection/code/test_paperGreen_without.py", line 459, in main
-    input_token_num, output_token_num, _, _, decoded_output_without_watermark, decoded_output_with_watermark, watermark_processor, _ = generate(
-  File "/workspace/PeerDetection/code/test_paperGreen_without.py", line 327, in generate
-    output_without_watermark = generate_without_watermark(**tokd_input)
-  File "/venv/main/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
-    return func(*args, **kwargs)
-  File "/venv/main/lib/python3.10/site-packages/transformers/generation/utils.py", line 2255, in generate
-    result = self._sample(
-  File "/venv/main/lib/python3.10/site-packages/transformers/generation/utils.py", line 3254, in _sample
-    outputs = self(**model_inputs, return_dict=True)
-  File "/venv/main/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-  File "/venv/main/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
-    return forward_call(*args, **kwargs)
-  File "/venv/main/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 831, in forward
-    outputs = self.model(
-  File "/venv/main/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-  File "/venv/main/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
-    return forward_call(*args, **kwargs)
-  File "/venv/main/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 589, in forward
-    layer_outputs = decoder_layer(
-  File "/venv/main/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-  File "/venv/main/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
-    return forward_call(*args, **kwargs)
-  File "/venv/main/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 348, in forward
-    hidden_states = self.mlp(hidden_states)
-  File "/venv/main/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-  File "/venv/main/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
-    return forward_call(*args, **kwargs)
-  File "/venv/main/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 186, in forward
-    down_proj = self.down_proj(self.act_fn(self.gate_proj(x)) * self.up_proj(x))
-torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 604.00 MiB. GPU 0 has a total capacity of 39.38 GiB of which 137.44 MiB is free. Process 1803763 has 19.61 GiB memory in use. Process 1808615 has 19.62 GiB memory in use. Of the allocated memory 17.64 GiB is allocated by PyTorch, and 1.47 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)

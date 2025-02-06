@@ -32,49 +32,54 @@ def replace_1_token(cut_prompt):
     top2ind = top_indices[0][1].item()
     return res, top1ind, top2ind
 
-# Function to process the attack
-def attack_process(decoded_output, epsilon):
-    skip = False
-    tokd_input = tokenizer(decoded_output, return_tensors="pt", add_special_tokens=True, truncation=True, max_length=300)["input_ids"].to(device)
-    input_length = tokd_input.shape[-1]
-    prefix_length = 31  # Fixed prefix length to protect initial tokens
 
-    if input_length <= prefix_length:
-        print(f"Skipping: Input too short ({input_length} tokens).")
-        return decoded_output, True
+def attack_process(decoded_output, epsilon, type):
+    
+    return decoded_output
 
-    attack_num = int(min(epsilon * input_length, input_length - prefix_length))
-    if attack_num <= 0:
-        print("Skipping: Not enough tokens to attack.")
-        return decoded_output, True
+# # Function to process the attack
+# def attack_process(decoded_output, epsilon):
+#     skip = False
+#     tokd_input = tokenizer(decoded_output, return_tensors="pt", add_special_tokens=True, truncation=True, max_length=300)["input_ids"].to(device)
+#     input_length = tokd_input.shape[-1]
+#     prefix_length = 31  # Fixed prefix length to protect initial tokens
 
-    random_indices = random.sample(range(prefix_length, input_length - 1), attack_num)
-    attacked_output = tokd_input.clone()
+#     if input_length <= prefix_length:
+#         print(f"Skipping: Input too short ({input_length} tokens).")
+#         return decoded_output, True
 
-    for rand_idx in random_indices:
-        cut_prompt = tokd_input[0][rand_idx - prefix_length:rand_idx]
-        standard_token = tokd_input[0][rand_idx]
-        select_token, top1ind, top2ind = replace_1_token(cut_prompt)
+#     attack_num = int(min(epsilon * input_length, input_length - prefix_length))
+#     if attack_num <= 0:
+#         print("Skipping: Not enough tokens to attack.")
+#         return decoded_output, True
 
-        if standard_token != select_token:
-            attacked_output[0][rand_idx] = select_token
-        else:
-            if standard_token != top1ind:
-                attacked_output[0][rand_idx] = top1ind
-            else:
-                attacked_output[0][rand_idx] = top2ind
+#     random_indices = random.sample(range(prefix_length, input_length - 1), attack_num)
+#     attacked_output = tokd_input.clone()
 
-    decoded_output = tokenizer.decode(attacked_output[0], skip_special_tokens=True)
-    return decoded_output, skip
+#     for rand_idx in random_indices:
+#         cut_prompt = tokd_input[0][rand_idx - prefix_length:rand_idx]
+#         standard_token = tokd_input[0][rand_idx]
+#         select_token, top1ind, top2ind = replace_1_token(cut_prompt)
 
-# Example usage
-prompt = "The systems interconnect is expected to cost"
-decoded_output = prompt
-epsilon = 0.2  # Fraction of tokens to attack
+#         if standard_token != select_token:
+#             attacked_output[0][rand_idx] = select_token
+#         else:
+#             if standard_token != top1ind:
+#                 attacked_output[0][rand_idx] = top1ind
+#             else:
+#                 attacked_output[0][rand_idx] = top2ind
 
-# Perform attack
-attacked_output, skip = attack_process(decoded_output, epsilon)
-if not skip:
-    print("Attacked Output:", attacked_output)
-else:
-    print("Attack skipped.")
+#     decoded_output = tokenizer.decode(attacked_output[0], skip_special_tokens=True)
+#     return decoded_output, skip
+
+# # Example usage
+# prompt = "The systems interconnect is expected to cost"
+# decoded_output = prompt
+# epsilon = 0.2  # Fraction of tokens to attack
+
+# # Perform attack
+# attacked_output, skip = attack_process(decoded_output, epsilon)
+# if not skip:
+#     print("Attacked Output:", attacked_output)
+# else:
+#     print("Attack skipped.")

@@ -1,5 +1,0 @@
-Skipping: Input too short (8 tokens).
-Attack skipped.
-Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:03<00:10,  3.49s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:07<00:07,  3.77s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:11<00:03,  3.82s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:12<00:00,  2.66s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:12<00:00,  3.05s/it]
-  0%|          | 0/546 [00:00<?, ?it/s] 43%|████▎     | 235/546 [00:00<00:00, 2346.70it/s] 86%|████████▌ | 470/546 [00:00<00:00, 2320.15it/s]100%|██████████| 546/546 [00:00<00:00, 2327.09it/s]
-  0%|          | 0/263 [00:00<?, ?it/s]Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
